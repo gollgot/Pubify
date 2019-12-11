@@ -18,43 +18,42 @@ VALUES 	('Aligro'),
 		('Dr. Gabs');
 
 -- Product
-INSERT INTO UnitMetrics (name, shortname)
+INSERT INTO UnitMetric (name, shortname)
 VALUES	('Gram', 'g'),
 		('Litre', 'l'),
         ('Bottle', 'bt'),
         ('Can', 'can');
+INSERT INTO Stock (quantity)
+VALUES	(22),
+        (4),
+        (16),
+        (2),
+        (2000),
+        (10),
+        (200),
+        (2000),
+        (500),
+        (500),
+        (2000),
+        (4000);
 
-INSERT INTO Product (name)
-VALUES	('Classic Beef Burger'),
-		('Fish \'N\' Chips'),
-        ('Dr. Gabs'),
-        ('Farmer'),
-        ('Giger Ale'),
-        ('Cuvée des Trolls'),
-        ('Minced meat'),
-        ('Buns'),
-        ('Cheddar'),
-        ('Letuce'),
-        ('Onion'),
-        ('Tomato'),
-        ('Cod fillet'),
-        ('Chips');
-
-INSERT INTO Stock (quantity, idProduct)
-VALUES	(22, 3),
-        (4, 4),
-        (16, 5),
-        (2, 6),
-        (2000, 7),
-        (10, 8),
-        (200, 9),
-        (2000, 10),
-        (500, 11),
-        (500, 12),
-        (2000, 13),
-        (4000, 14);
+INSERT INTO Product (name, idStock)
+VALUES	('Classic Beef Burger', NULL),
+		('Fish \'N\' Chips', NULL),
+        ('Dr. Gabs', 1),
+        ('Farmer', 2),
+        ('Giger Ale', 3),
+        ('Cuvée des Trolls', 4),
+        ('Minced meat', 5),
+        ('Buns', 6),
+        ('Cheddar', 7),
+        ('Letuce', 8),
+        ('Onion', 9),
+        ('Tomato', 10),
+        ('Cod fillet', 11),
+        ('Chips', 12);
         
-INSERT INTO Buyable (idProduct, price, startSaleDate, endSaleDate)
+INSERT INTO Buyable (idProduct, price, startSellDate, endSellDate)
 VALUES	(1, 18.50, '2019-01-15', NULL),
 		(2, 23.50, '2019-01-15', NULL),
 		(3, 4.00, '2019-01-15', NULL),
@@ -82,7 +81,7 @@ INSERT INTO Food
 VALUES	(1),
 		(2);
 
-INSERT INTO Ingredient_Food (idFood, idIngredient, quantity)
+INSERT INTO Food_Ingredient (idFood, idIngredient, quantity)
 VALUES 	(1, 7, 200),
 		(1, 8, 2),
         (1, 9, 10),
@@ -93,13 +92,13 @@ VALUES 	(1, 7, 200),
         (2, 13, 150),
         (2, 14, 75);
 
-INSERT INTO HappyHour (startAt, duration, reduction, idManager, reductionPercent)
+INSERT INTO HappyHour (startAt, duration, reductionPercent, idManager, reductionPercent)
 VALUES	('2019-03-14', '01:00', 10, 2, 3),
 		('2019-03-14', '01:00', 10, 2, 4),
         ('2019-03-14', '01:00', 10, 2, 6);
 
 
-INSERT INTO Oder (orderAt, tva)
+INSERT INTO Order (orderAt, tva)
 VALUES	('2019-12-06', 7.7),
 		('2019-12-06', 7.7),
         ('2019-04-14', 7.7),
@@ -110,7 +109,7 @@ VALUES	(1, 3, 10),
 		(2, 4, 7);
 
 
-INSERT INTO CustomerOrder_Buyable (idCustomerOrder, idBuyable, price, quantity)
+INSERT INTO Buyable_CustomerOrder (idCustomerOrder, idBuyable, price, quantity)
 VALUES	(1, ),
 		();
         
