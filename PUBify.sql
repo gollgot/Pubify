@@ -226,7 +226,7 @@ ALTER TABLE CustomerOrder
 	ADD CONSTRAINT FK_CustomerOrder_idOrder
 		FOREIGN KEY (idOrder)
 		REFERENCES `Order` (id)
-		ON DELETE RESTRICT
+		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	ADD CONSTRAINT FK_CustomerOrder_idWaiter
 		FOREIGN KEY (idWaiter)
@@ -314,7 +314,7 @@ ALTER TABLE SupplyOrder
 	ADD CONSTRAINT FK_SupplyOrder_idOrder
 		FOREIGN KEY (idOrder)
 		REFERENCES `Order` (id)
-		ON DELETE RESTRICT
+		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	ADD CONSTRAINT FK_SupplyOrder_idSupplier
 		FOREIGN KEY (idSupplier)
