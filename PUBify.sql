@@ -92,11 +92,11 @@ CREATE TABLE Ingredient (
 
 
 -- -----------------------------------------------------
--- Table HappyHour_Drink
+-- Table Drink_HappyHour
 -- -----------------------------------------------------
-CREATE TABLE HappyHour_Drink (
-    startAtHappyHour DATETIME     NOT NULL,
+CREATE TABLE Drink_HappyHour (
     idBuyableDrink   INT UNSIGNED NOT NULL,
+    startAtHappyHour DATETIME     NOT NULL,
     PRIMARY KEY (startAtHappyHour, idBuyableDrink)
 ) ENGINE = InnoDB;
 
@@ -223,7 +223,7 @@ ALTER TABLE Buyable_CustomerOrder
     ADD CONSTRAINT FK_Buyable_CustomerOrder_idCustomerOrder
         FOREIGN KEY (idCustomerOrder)
             REFERENCES CustomerOrder (idOrder)
-            ON DELETE RESTRICT
+            ON DELETE CASCADE
             ON UPDATE CASCADE,
     ADD CONSTRAINT FK_Buyable_CustomerOrder_idBuyable
         FOREIGN KEY (idBuyable)
@@ -276,16 +276,16 @@ ALTER TABLE HappyHour
             ON DELETE RESTRICT
             ON UPDATE CASCADE;
 
-ALTER TABLE HappyHour_Drink
-    ADD CONSTRAINT FK_HappyHour_Drink_idManagerHappyHour
-        FOREIGN KEY (startAtHappyHour)
-            REFERENCES HappyHour (startAt)
-            ON DELETE RESTRICT
-            ON UPDATE CASCADE,
-    ADD CONSTRAINT FK_HappyHour_Drink_idBuyableDrink
+ALTER TABLE Drink_HappyHour
+    ADD CONSTRAINT FK_Drink_HappyHour_idBuyableDrink
         FOREIGN KEY (idBuyableDrink)
             REFERENCES Drink (idBuyable)
             ON DELETE RESTRICT
+            ON UPDATE CASCADE,
+    ADD CONSTRAINT FK_Drink_HappyHour_idManagerHappyHour
+        FOREIGN KEY (startAtHappyHour)
+            REFERENCES HappyHour (startAt)
+            ON DELETE CASCADE
             ON UPDATE CASCADE;
 
 ALTER TABLE Ingredient
@@ -318,7 +318,7 @@ ALTER TABLE Product_SupplyOrder
     ADD CONSTRAINT FK_Product_SupplyOrder_idSupplyOrder
         FOREIGN KEY (idSupplyOrder)
             REFERENCES SupplyOrder (idOrder)
-            ON DELETE RESTRICT
+            ON DELETE CASCADE
             ON UPDATE CASCADE,
     ADD CONSTRAINT FK_Product_SupplyOrder_idProduct
         FOREIGN KEY (idProduct)
