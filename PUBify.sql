@@ -220,13 +220,13 @@ ALTER TABLE Buyable
             ON UPDATE CASCADE;
 
 ALTER TABLE Buyable_CustomerOrder
-    ADD INDEX FK_CustomerOrder_Buyable_idOrderCustomerOrder_idx (idCustomerOrder ASC) VISIBLE,
+    ADD INDEX FK_CustomerOrder_Buyable_idOrderCustomerOrder_idx (idCustomerOrder ASC),
     ADD CONSTRAINT FK_Buyable_CustomerOrder_idCustomerOrder
         FOREIGN KEY (idCustomerOrder)
             REFERENCES CustomerOrder (idOrder)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-    ADD INDEX FK_Buyable_CustomerOrder_idPBuyable_idx (idBuyable ASC) VISIBLE,
+    ADD INDEX FK_Buyable_CustomerOrder_idPBuyable_idx (idBuyable ASC),
     ADD CONSTRAINT FK_Buyable_CustomerOrder_idBuyable
         FOREIGN KEY (idBuyable)
             REFERENCES Buyable (idProduct)
@@ -239,7 +239,7 @@ ALTER TABLE CustomerOrder
             REFERENCES `Order` (id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-    ADD INDEX FK_CustomerOrder_idWaiter_idx (idWaiter ASC) VISIBLE,
+    ADD INDEX FK_CustomerOrder_idWaiter_idx (idWaiter ASC),
     ADD CONSTRAINT FK_CustomerOrder_idWaiter
         FOREIGN KEY (idWaiter)
             REFERENCES Waiter (idStaff)
@@ -255,13 +255,13 @@ ALTER TABLE Drink
 
 
 ALTER TABLE Drink_HappyHour
-    ADD INDEX FK_HappyHour_Drink_idDrink_idx (idDrink ASC) VISIBLE,
+    ADD INDEX FK_HappyHour_Drink_idDrink_idx (idDrink ASC),
     ADD CONSTRAINT FK_Drink_HappyHour_idBuyableDrink
         FOREIGN KEY (idDrink)
             REFERENCES Drink (idBuyable)
             ON DELETE RESTRICT
             ON UPDATE CASCADE,
-    ADD INDEX FK_HappyHour_Drink_idHappyHour_idx (startAtHappyHour ASC) VISIBLE,
+    ADD INDEX FK_HappyHour_Drink_idHappyHour_idx (startAtHappyHour ASC),
     ADD CONSTRAINT FK_Drink_HappyHour_idHappyHour
         FOREIGN KEY (startAtHappyHour)
             REFERENCES HappyHour (startAt)
@@ -277,13 +277,13 @@ ALTER TABLE Food
             ON UPDATE CASCADE;
 
 ALTER TABLE Food_Ingredient
-    ADD INDEX FK_Food_Ingredient_idIngredient_idx (idIngredient ASC) VISIBLE,
+    ADD INDEX FK_Food_Ingredient_idIngredient_idx (idIngredient ASC),
     ADD CONSTRAINT FK_Food_Ingredient_idFood
         FOREIGN KEY (idFood)
             REFERENCES Food (idBuyable)
             ON DELETE RESTRICT
             ON UPDATE CASCADE,
-    ADD INDEX FK_Food_Ingredient_idFood_idx (idFood ASC) VISIBLE,
+    ADD INDEX FK_Food_Ingredient_idFood_idx (idFood ASC),
     ADD CONSTRAINT FK_Food_Ingredient_idIngredient
         FOREIGN KEY (idIngredient)
             REFERENCES Ingredient (idProduct)
@@ -291,7 +291,7 @@ ALTER TABLE Food_Ingredient
             ON UPDATE CASCADE;
 
 ALTER TABLE HappyHour
-    ADD INDEX FK_Manager_Drink_idManager_idx (idManager ASC) VISIBLE,
+    ADD INDEX FK_Manager_Drink_idManager_idx (idManager ASC),
     ADD CONSTRAINT FK_HappyHour_idManager
         FOREIGN KEY (idManager)
             REFERENCES Manager (idStaff)
@@ -313,13 +313,13 @@ ALTER TABLE Manager
             ON UPDATE CASCADE;
 
 ALTER TABLE Product
-    ADD INDEX FK_Product_idStock_idx (idStock ASC) VISIBLE,
+    ADD INDEX FK_Product_idStock_idx (idStock ASC),
     ADD CONSTRAINT FK_Product_idStock
         FOREIGN KEY (idStock)
             REFERENCES Stock (id)
             ON DELETE RESTRICT
             ON UPDATE CASCADE,
-    ADD INDEX FK_Product_nameUnitMetrics_idx (nameUnitMetric ASC) VISIBLE,
+    ADD INDEX FK_Product_nameUnitMetrics_idx (nameUnitMetric ASC),
     ADD CONSTRAINT FK_Product_nameUnitMetric
         FOREIGN KEY (nameUnitMetric)
             REFERENCES UnitMetric (name)
@@ -327,13 +327,13 @@ ALTER TABLE Product
             ON UPDATE CASCADE;
 
 ALTER TABLE Product_SupplyOrder
-    ADD INDEX FK_SupplyOrder_Product_idProduct_idx (idProduct ASC) VISIBLE,
+    ADD INDEX FK_SupplyOrder_Product_idProduct_idx (idProduct ASC),
     ADD CONSTRAINT FK_Product_SupplyOrder_idSupplyOrder
         FOREIGN KEY (idSupplyOrder)
             REFERENCES SupplyOrder (idOrder)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-    ADD INDEX FK_SupplyOrder_Product_idOrderSupplyOrder_idx (idSupplyOrder ASC) VISIBLE,
+    ADD INDEX FK_SupplyOrder_Product_idOrderSupplyOrder_idx (idSupplyOrder ASC),
     ADD CONSTRAINT FK_Product_SupplyOrder_idProduct
         FOREIGN KEY (idProduct)
             REFERENCES Product (id)
@@ -346,13 +346,13 @@ ALTER TABLE SupplyOrder
             REFERENCES `Order` (id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-    ADD INDEX FK_SupplyOrder_idSupplier_idx (idSupplier ASC) VISIBLE,
+    ADD INDEX FK_SupplyOrder_idSupplier_idx (idSupplier ASC),
     ADD CONSTRAINT FK_SupplyOrder_idSupplier
         FOREIGN KEY (idSupplier)
             REFERENCES Supplier (id)
             ON DELETE RESTRICT
             ON UPDATE CASCADE,
-    ADD INDEX FK_SupplyOrder_idManager_idx (idManager ASC) VISIBLE,
+    ADD INDEX FK_SupplyOrder_idManager_idx (idManager ASC),
     ADD CONSTRAINT FK_SupplyOrder_idManager
         FOREIGN KEY (idManager)
             REFERENCES Manager (idStaff)
