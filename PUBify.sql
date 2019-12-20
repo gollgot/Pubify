@@ -150,11 +150,11 @@ CREATE TABLE Product_SupplyOrder (
 -- -----------------------------------------------------
 CREATE TABLE Staff (
     id       INT UNSIGNED AUTO_INCREMENT,
-    email    VARCHAR(255)        NOT NULL,
-    name     VARCHAR(45)         NOT NULL,
-    lastname VARCHAR(45)         NOT NULL,
-    password VARCHAR(255)        NOT NULL,
-    active   TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+    email    VARCHAR(255) NOT NULL,
+    name     VARCHAR(45)  NOT NULL,
+    lastname VARCHAR(45)  NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    active   BOOLEAN      NOT NULL DEFAULT 1,
     CONSTRAINT PK_Staff PRIMARY KEY (id),
     CONSTRAINT UC_Staff_email UNIQUE (email)
 ) ENGINE = InnoDB;
