@@ -106,6 +106,7 @@ CREATE TABLE Drink_HappyHour (
 -- -----------------------------------------------------
 CREATE TABLE Manager (
     idStaff INT UNSIGNED,
+    active   BOOLEAN      NOT NULL DEFAULT 1,
     CONSTRAINT PK_Manager PRIMARY KEY (idStaff)
 ) ENGINE = InnoDB;
 
@@ -154,7 +155,6 @@ CREATE TABLE Staff (
     name     VARCHAR(45)  NOT NULL,
     lastname VARCHAR(45)  NOT NULL,
     password VARCHAR(255) NOT NULL,
-    active   BOOLEAN      NOT NULL DEFAULT 1,
     CONSTRAINT PK_Staff PRIMARY KEY (id),
     CONSTRAINT UC_Staff_email UNIQUE (email)
 ) ENGINE = InnoDB;
@@ -206,6 +206,7 @@ CREATE TABLE UnitMetric (
 -- -----------------------------------------------------
 CREATE TABLE Waiter (
     idStaff INT UNSIGNED,
+    active   BOOLEAN      NOT NULL DEFAULT 1,
     CONSTRAINT PK_Waiter PRIMARY KEY (idStaff)
 ) ENGINE = InnoDB;
 
