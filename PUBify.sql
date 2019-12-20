@@ -45,7 +45,7 @@ CREATE TABLE CustomerOrder (
 -- -----------------------------------------------------
 CREATE TABLE Drink (
     idBuyable    INT UNSIGNED,
-    alcoholLevel DECIMAL(3, 1) UNSIGNED NOT NULL,
+    alcoholLevel DECIMAL(3, 1) NOT NULL,
     CONSTRAINT PK_Drink PRIMARY KEY (idBuyable)
 ) ENGINE = InnoDB;
 
