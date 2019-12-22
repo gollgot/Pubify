@@ -1,2 +1,4 @@
 *.bak
 .idea
+src/vendor
+src/composer.lock
