@@ -1,0 +1,11 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+#login-wrapper {
+    margin: 100px auto 0px auto;
+    padding: 20px;
+    width: 280px;
+    border: 1px solid #CED4DA;
+}

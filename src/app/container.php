@@ -12,7 +12,12 @@ $container['db'] = function ($c) {
     return $pdo;
 };
 
-// Register component on container
+// Flash messages => http://www.slimframework.com/docs/v3/features/flash.html
+$container['flash'] = function () {
+    return new \Slim\Flash\Messages();
+};
+
+// Twig view
 $container['view'] = function ($container) {
     $appDir = dirname(__DIR__);
 
@@ -24,6 +29,18 @@ $container['view'] = function ($container) {
     $router = $container->get('router');
     $uri = \Slim\Http\Uri::createFromEnvironment(new \Slim\Http\Environment($_SERVER));
     $view->addExtension(new \Slim\Views\TwigExtension($router, $uri));
+    // Add 2 twig global variables one is check => boolean, one is user => array
+    // use : {{ auth.check }}, {{ auth.user }}
+    $view->getEnvironment()->addGlobal('auth', [
+        'check' => $container->auth->check(),
+        'user' => $container->auth->user(),
+    ]);
+    $view->getEnvironment()->addGlobal('flash', $container->flash);
 
     return $view;
+};
+
+// Auth management
+$container['auth'] = function ($container) {
+    return new App\Auth\Auth($container);
 };

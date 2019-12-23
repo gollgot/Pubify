@@ -1,0 +1,7 @@
+{% if flash.getMessage('success') %}
+    <div class="alert alert-success" role="alert">
+        {% for msg in flash.getMessage('success') %}
+            {{ msg }}
+        {% endfor %}
+    </div>
+{% endif %}

@@ -9,7 +9,7 @@ return [
             'host' => 'localhost',
             'user' => 'homestead',
             'pass'  => 'secret',
-            'dbname' => 'pubify'
+            'dbname' => 'PUBify'
         ]
     ]
 ];

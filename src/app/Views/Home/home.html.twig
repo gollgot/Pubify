@@ -12,6 +12,14 @@
 
         <h2>Hello {{ nom }}</h2>
 
+        <p>
+            {%  if auth.check %}
+                Connecté, bienvenue {{ auth.user.email }}
+            {% else %}
+                Pas connecté
+            {% endif %}
+        </p>
+
     </div>
 </div>
 

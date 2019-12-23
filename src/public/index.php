@@ -2,6 +2,8 @@
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
+session_start();
+
 require '../vendor/autoload.php';
 
 // General configuration
@@ -15,6 +17,7 @@ require('../app/container.php');
 
 // Routes
 require '../app/Routes/home.php';
+require '../app/Routes/auth.php';
 
 
 $app->run();
