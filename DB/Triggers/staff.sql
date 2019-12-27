@@ -6,7 +6,7 @@ CREATE TRIGGER before_manager_delete
 BEFORE DELETE ON Manager
 FOR EACH ROW
 BEGIN
-    DECLARE current_nb_managers INTEGER;
+    DECLARE current_nb_managers INT;
 
     SET current_nb_managers = (SELECT COUNT(*) FROM Manager);
 

@@ -1,0 +1,13 @@
+USE PUBify;
+
+DELIMITER $$
+
+CREATE FUNCTION is_negative_decimal(alcohol_level DECIMAL)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    RETURN IF(alcohol_level < 0, TRUE, FALSE);
+END
+$$
+
+DELIMITER ;
