@@ -2,11 +2,11 @@ USE PUBify;
 
 DELIMITER $$
 
-CREATE FUNCTION is_negative_decimal(alcohol_level DECIMAL)
+CREATE FUNCTION is_negative_decimal(num DECIMAL)
 RETURNS BOOLEAN
 DETERMINISTIC
 BEGIN
-    RETURN IF(alcohol_level < 0, TRUE, FALSE);
+    RETURN IF(num < 0, TRUE, FALSE);
 END
 $$
 
