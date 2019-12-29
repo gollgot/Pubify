@@ -1,4 +1,7 @@
 # TODO
-* Créer procédure stockée pour regrouper des checks du genre vérifier si pas négatif
+* Créer procédure stockée
+    * vérifier si valeur > 0 sur int
+    * valeur entre 2 bornes sur int
 * Créer des vues pour les héritages
 * Créer les différents triggers (voir CI.md)
+    * 
