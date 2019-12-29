@@ -69,4 +69,20 @@ BEGIN
     END IF;
 END $$
 
+CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_duration TIME)
+BEGIN
+    DECLARE nb_overlapping INT;
+    SET nb_overlapping = (
+        SELECT COUNT(*) FROM HappyHour
+        WHERE new_startAt BETWEEN startAt AND ADDTIME(startAt, duration) OR
+              startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration));
+
+    IF nb_overlapping > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Happy hours can\'t be overlapping';
+    END IF;
+END $$
+
 DELIMITER ;

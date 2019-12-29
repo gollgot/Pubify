@@ -21,6 +21,7 @@ BEFORE INSERT ON HappyHour
 FOR EACH ROW
 BEGIN
     CALL validate_happy_hour_duration(NEW.duration);
+    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
@@ -29,6 +30,7 @@ BEFORE UPDATE ON HappyHour
 FOR EACH ROW
 BEGIN
     CALL validate_happy_hour_duration(NEW.duration);
+    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
