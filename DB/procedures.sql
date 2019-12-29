@@ -6,6 +6,7 @@ DELIMITER $$
 -- GENERAL USAGE PROCEDURES n FUNCTIONS --
 -- ------------------------------------ --
 
+DROP PROCEDURE IF EXISTS is_negative_decimal $$
 CREATE FUNCTION is_negative_decimal(num DECIMAL)
 RETURNS BOOLEAN
 DETERMINISTIC
@@ -13,6 +14,7 @@ BEGIN
     RETURN IF(num < 0, TRUE, FALSE);
 END $$
 
+DROP PROCEDURE IF EXISTS is_negative_int $$
 CREATE FUNCTION is_negative_int(num INT)
 RETURNS BOOLEAN
 DETERMINISTIC
@@ -20,6 +22,7 @@ BEGIN
     RETURN IF(num < 0, TRUE, FALSE);
 END $$
 
+DROP PROCEDURE IF EXISTS is_negative_time $$
 CREATE FUNCTION is_negative_time(`time` TIME)
 RETURNS BOOLEAN
 DETERMINISTIC
@@ -32,6 +35,7 @@ END $$
 -- ------------------------------- --
 
 /* DRINK */
+DROP PROCEDURE IF EXISTS validate_alcohol_level $$
 CREATE PROCEDURE validate_alcohol_level(alcohol_level DECIMAL)
 BEGIN
     IF is_negative_decimal(alcohol_level) THEN
@@ -43,6 +47,7 @@ BEGIN
 END $$
 
 /* HAPPY HOUR */
+DROP PROCEDURE IF EXISTS validate_happy_hour_reduction $$
 CREATE PROCEDURE validate_happy_hour_reduction(reduction INT)
 BEGIN
     DECLARE max_reduction_percent INT;
@@ -59,6 +64,7 @@ BEGIN
     END IF;
 END $$
 
+DROP PROCEDURE IF EXISTS validate_happy_hour_duration $$
 CREATE PROCEDURE validate_happy_hour_duration(duration TIME)
 BEGIN
     IF is_negative_time(duration) THEN
@@ -69,6 +75,7 @@ BEGIN
     END IF;
 END $$
 
+DROP PROCEDURE IF EXISTS check_happy_hour_not_overlapping $$
 CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_duration TIME)
 BEGIN
     DECLARE nb_overlapping INT;

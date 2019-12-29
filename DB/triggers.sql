@@ -2,6 +2,7 @@ USE PUBify;
 
 DELIMITER $$
 
+DROP TRIGGER IF EXISTS before_drink_insert $$
 CREATE TRIGGER before_drink_insert
 BEFORE INSERT ON Drink
 FOR EACH ROW
@@ -9,6 +10,7 @@ BEGIN
     CALL validate_alcohol_level(NEW.alcoholLevel);
 END $$
 
+DROP TRIGGER IF EXISTS before_drink_update $$
 CREATE TRIGGER before_drink_update
 BEFORE UPDATE ON Drink
 FOR EACH ROW
@@ -16,6 +18,7 @@ BEGIN
     CALL validate_alcohol_level(NEW.alcoholLevel);
 END $$
 
+DROP TRIGGER IF EXISTS before_happy_hour_insert $$
 CREATE TRIGGER before_happy_hour_insert
 BEFORE INSERT ON HappyHour
 FOR EACH ROW
@@ -25,6 +28,7 @@ BEGIN
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
+DROP TRIGGER IF EXISTS before_happy_hour_update $$
 CREATE TRIGGER before_happy_hour_update
 BEFORE UPDATE ON HappyHour
 FOR EACH ROW
@@ -34,6 +38,7 @@ BEGIN
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
+DROP TRIGGER IF EXISTS before_manager_delete $$
 CREATE TRIGGER before_manager_delete
 BEFORE DELETE ON Manager
 FOR EACH ROW
@@ -52,7 +57,7 @@ BEGIN
 END $$
 
 -- TODO: voir comment faire pour le before update (décision à prendre)
-DROP TRIGGER IF EXISTS before_buyable_customer_order_insert;
+DROP TRIGGER IF EXISTS before_buyable_customer_order_insert $$
 CREATE TRIGGER before_buyable_customer_order_insert
 BEFORE INSERT ON Buyable_CustomerOrder
 FOR EACH ROW
