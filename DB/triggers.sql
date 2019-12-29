@@ -49,4 +49,47 @@ BEGIN
     END IF;
 END $$
 
+-- TODO: voir comment faire pour le before update (décision à prendre)
+DROP TRIGGER IF EXISTS before_buyable_customer_order_insert;
+CREATE TRIGGER before_buyable_customer_order_insert
+BEFORE INSERT ON Buyable_CustomerOrder
+FOR EACH ROW
+BEGIN
+    DECLARE stock_id INT;
+    DECLARE error BOOLEAN;
+
+    SET stock_id = (
+        SELECT idStock
+        FROM Product
+        WHERE id = NEW.idBuyable
+    );
+    SET error = false;
+
+    IF stock_id IS NULL THEN
+        IF (
+            SELECT COUNT(*)
+            FROM Food_Ingredient
+                INNER JOIN Product
+                    ON Food_Ingredient.idIngredient = Product.id
+                INNER JOIN Stock
+                    ON Product.idStock = Stock.id
+            WHERE idFood = NEW.idBuyable
+            AND Stock.quantity < Food_Ingredient.quantity * NEW.quantity
+        ) THEN
+            SET error = true;
+        END IF;
+    ELSE
+        IF (SELECT quantity FROM Stock WHERE id = stock_id) < NEW.quantity THEN
+            SET error = true;
+        END IF;
+    END IF;
+
+    IF error = true THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Not enough stock for the order';
+    END IF;
+END $$
+
 DELIMITER ;
