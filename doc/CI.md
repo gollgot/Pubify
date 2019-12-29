@@ -1,8 +1,8 @@
 # Contraintes d'intégrité
-* On ne peut pas supprimer le dernier Manager
-* On ne peut pas avoir des taux d'alcoolémie négatif
-* La durée (duration) d’une happy hour ne peut pas être négative.
-* Le pourcentage de réduction d’une boisson d’une happy hour doit être supérieur à 0 et inférieur ou égal à 100.
+* On ne peut pas supprimer le dernier Manager (DONE)
+* On ne peut pas avoir des taux d'alcoolémie négatif (DONE)
+* La durée (duration) d’une happy hour ne peut pas être négative (DONE).
+* Le pourcentage de réduction d’une boisson d’une happy hour doit être supérieur à 0 et inférieur ou égal à 100 (DONE).
 * Il ne peut pas y avoir deux happy hours qui se chevauchent (même période).
 * Un serveur ne peut pas prendre une commande client sur un produit qui est en quantité insuffisante (ou ingrédient qui le compose).
 * On ne peut pas avoir en stock de la nourriture qui est composé d’ingrédients.
