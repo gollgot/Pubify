@@ -1,0 +1,21 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+header {
+    margin-bottom: 20px;
+    padding-top: 13px;
+    background-color: #D4D4D4;
+    color: #000;
+    height: 50px;
+}
+
+header a.logout {
+    text-decoration: none;
+    color: #000;
+    float: right;
+}
+
+#page-content {
+    margin-left: 250px;
+}

@@ -29,7 +29,7 @@ class AuthController extends Controller
     public function postLogin(Request $request, Response $response)
     {
         if ($this->container->auth->attempt($request->getParam('email'), $request->getParam('password'))) {
-            return $response->withRedirect($this->container->router->pathFor('home'));
+            return $response->withRedirect($this->container->router->pathFor('admin_dashboard_show'));
         } else {
             // If error when auth attempt => display flash error and last email to the login page
             $this->container->flash->addMessage('error', 'Invalid email or password');

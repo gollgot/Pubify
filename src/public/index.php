@@ -18,6 +18,8 @@ require('../app/container.php');
 // Routes
 require '../app/Routes/home.php';
 require '../app/Routes/auth.php';
+require '../app/Routes/menu.php';
+require '../app/Routes/Admin/dashboard.php';
 
 
 $app->run();
