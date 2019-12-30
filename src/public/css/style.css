@@ -8,6 +8,19 @@ body {
     display: block;
 }
 
+header {
+    padding-top: 13px;
+    background-color: #8C7B68;
+    color: #E3E3E3;
+    height: 50px;
+}
+
+header a.login {
+    text-decoration: none;
+    color: #E3E3E3;
+    float: right;
+}
+
 #login-wrapper {
     margin: 100px auto 0px auto;
     padding: 20px;

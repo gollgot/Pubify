@@ -1,0 +1,20 @@
+{% extends 'Layout/admin_layout.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>Dashboard</h1>
+            <p>
+                {%  if auth.check %}
+                    Connecté, bienvenue {{ auth.user.email }}
+                {% else %}
+                    Pas connecté
+                {% endif %}
+            </p>
+
+        </div>
+    </div>
+
+{% endblock %}
