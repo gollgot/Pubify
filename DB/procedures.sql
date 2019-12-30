@@ -92,4 +92,15 @@ BEGIN
     END IF;
 END $$
 
+DROP PROCEDURE IF EXISTS check_product_not_composed $$
+CREATE PROCEDURE check_product_not_composed(idProduct INT)
+BEGIN
+    IF (SELECT COUNT(*) FROM Food_Ingredient WHERE idFood = idProduct) > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Composed products can\'t be stocked!';
+    END IF;
+END $$
+
 DELIMITER ;
