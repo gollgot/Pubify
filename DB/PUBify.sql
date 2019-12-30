@@ -106,7 +106,7 @@ CREATE TABLE Drink_HappyHour (
 -- -----------------------------------------------------
 CREATE TABLE Manager (
     idStaff INT UNSIGNED,
-    active   BOOLEAN      NOT NULL DEFAULT 1,
+    active  BOOLEAN NOT NULL DEFAULT 1,
     CONSTRAINT PK_Manager PRIMARY KEY (idStaff)
 ) ENGINE = InnoDB;
 
@@ -128,7 +128,6 @@ CREATE TABLE `Order` (
 CREATE TABLE Product (
     id             INT UNSIGNED AUTO_INCREMENT,
     name           VARCHAR(100) NOT NULL,
-    idStock        INT UNSIGNED NULL,
     nameUnitMetric VARCHAR(20)  NOT NULL,
     CONSTRAINT PK_Product PRIMARY KEY (id)
 ) ENGINE = InnoDB;
@@ -164,8 +163,9 @@ CREATE TABLE Staff (
 -- Table Stock
 -- -----------------------------------------------------
 CREATE TABLE Stock (
-    id       INT UNSIGNED AUTO_INCREMENT,
-    quantity DOUBLE UNSIGNED NOT NULL,
+    id        INT UNSIGNED AUTO_INCREMENT,
+    quantity  DOUBLE UNSIGNED NOT NULL,
+    idProduct INT UNSIGNED    NOT NULL,
     CONSTRAINT PK_Stock PRIMARY KEY (id)
 ) ENGINE = InnoDB;
 
@@ -206,7 +206,7 @@ CREATE TABLE UnitMetric (
 -- -----------------------------------------------------
 CREATE TABLE Waiter (
     idStaff INT UNSIGNED,
-    active   BOOLEAN      NOT NULL DEFAULT 1,
+    active  BOOLEAN NOT NULL DEFAULT 1,
     CONSTRAINT PK_Waiter PRIMARY KEY (idStaff)
 ) ENGINE = InnoDB;
 
@@ -314,12 +314,6 @@ ALTER TABLE Manager
             ON UPDATE CASCADE;
 
 ALTER TABLE Product
-    ADD INDEX FK_Product_idStock_idx (idStock ASC),
-    ADD CONSTRAINT FK_Product_idStock
-        FOREIGN KEY (idStock)
-            REFERENCES Stock (id)
-            ON DELETE RESTRICT
-            ON UPDATE CASCADE,
     ADD INDEX FK_Product_nameUnitMetrics_idx (nameUnitMetric ASC),
     ADD CONSTRAINT FK_Product_nameUnitMetric
         FOREIGN KEY (nameUnitMetric)
@@ -336,6 +330,14 @@ ALTER TABLE Product_SupplyOrder
             ON UPDATE CASCADE,
     ADD INDEX FK_SupplyOrder_Product_idOrderSupplyOrder_idx (idSupplyOrder ASC),
     ADD CONSTRAINT FK_Product_SupplyOrder_idProduct
+        FOREIGN KEY (idProduct)
+            REFERENCES Product (id)
+            ON DELETE RESTRICT
+            ON UPDATE CASCADE;
+
+ALTER TABLE Stock
+    ADD INDEX FK_Stock_idProduct_idx (idProduct ASC),
+    ADD CONSTRAINT FK_Stock_idProduct
         FOREIGN KEY (idProduct)
             REFERENCES Product (id)
             ON DELETE RESTRICT

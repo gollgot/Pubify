@@ -26,35 +26,35 @@ VALUES ('Gram', 'g'),
        ('Bottle', 'bt'),
        ('Can', 'can');
 
-INSERT INTO Stock (quantity)
-VALUES (22),
-       (4),
-       (16),
-       (2),
-       (2000),
-       (10),
-       (200),
-       (2000),
-       (500),
-       (500),
-       (2000),
-       (4000);
+INSERT INTO Product (name, nameUnitMetric)
+VALUES ('Classic Beef Burger', 'Gram'),
+       ('Fish \'N\' Chips', 'Gram'),
+       ('Dr. Gabs', 'Bottle'),
+       ('Farmer', 'Can'),
+       ('Ginger Ale', 'Bottle'),
+       ('Cuvée des Trolls', 'Bottle'),
+       ('Minced meat', 'Gram'),
+       ('Buns', 'Gram'),
+       ('Cheddar', 'Gram'),
+       ('Letuce', 'Gram'),
+       ('Onion', 'Gram'),
+       ('Tomato', 'Gram'),
+       ('Cod fillet', 'Gram'),
+       ('Chips', 'Gram');
 
-INSERT INTO Product (name, idStock, nameUnitMetric)
-VALUES ('Classic Beef Burger', NULL, 'Gram'),
-       ('Fish \'N\' Chips', NULL, 'Gram'),
-       ('Dr. Gabs', 1, 'Bottle'),
-       ('Farmer', 2, 'Can'),
-       ('Ginger Ale', 3, 'Bottle'),
-       ('Cuvée des Trolls', 4, 'Bottle'),
-       ('Minced meat', 5, 'Gram'),
-       ('Buns', 6, 'Gram'),
-       ('Cheddar', 7, 'Gram'),
-       ('Letuce', 8, 'Gram'),
-       ('Onion', 9, 'Gram'),
-       ('Tomato', 10, 'Gram'),
-       ('Cod fillet', 11, 'Gram'),
-       ('Chips', 12, 'Gram');
+INSERT INTO Stock (quantity, idProduct)
+VALUES (22, 3),
+       (4, 4),
+       (16, 5),
+       (2, 6),
+       (2000, 7),
+       (10, 8),
+       (200, 9),
+       (2000, 10),
+       (500, 11),
+       (500, 12),
+       (2000, 13),
+       (4000, 14);
 
 INSERT INTO Buyable (idProduct, price, startSaleDate, endSaleDate)
 VALUES (1, 18.50, '2019-01-15', NULL),
@@ -97,9 +97,9 @@ VALUES (1, 7, 200),
 
 -- Happy Hour
 INSERT INTO HappyHour (startAt, duration, reductionPercent, idManager)
-VALUES ('2019-03-14', '01:00', 10, 2),
-       ('2019-03-15', '01:00', 10, 2),
-       ('2019-03-16', '01:00', 10, 2);
+VALUES ('2019-03-14 16:15', '01:00', 10, 2),
+       ('2019-03-15 21:25', '01:00', 10, 2),
+       ('2019-03-16 23:18', '01:00', 10, 2);
 
 -- Order
 INSERT INTO `Order` (orderAt, tva)
