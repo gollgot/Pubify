@@ -56,8 +56,25 @@ BEGIN
     END IF;
 END $$
 
+DROP TRIGGER IF EXISTS before_stock_insert $$
+CREATE TRIGGER before_stock_insert
+BEFORE INSERT ON Stock
+FOR EACH ROW
+BEGIN
+    CALL check_product_not_composed(NEW.idProduct);
+END $$
+
+DROP TRIGGER IF EXISTS before_stock_update $$
+CREATE TRIGGER before_stock_update
+BEFORE UPDATE ON Stock
+FOR EACH ROW
+BEGIN
+    CALL check_product_not_composed(NEW.idProduct);
+END $$
+
 -- TODO: voir comment faire pour le before update (décision à prendre)
-DROP TRIGGER IF EXISTS before_buyable_customer_order_insert $$
+/*
+DROP TRIGGER IF EXISTS before_buyable_customer_order_insert
 CREATE TRIGGER before_buyable_customer_order_insert
 BEFORE INSERT ON Buyable_CustomerOrder
 FOR EACH ROW
@@ -97,6 +114,7 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Not enough stock for the order';
     END IF;
-END $$
+END
+*/
 
 DELIMITER ;
