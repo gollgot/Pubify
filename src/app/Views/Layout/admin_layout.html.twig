@@ -15,14 +15,15 @@
 
         <div id='side-menu'>
             <ul>
-                <li class='active'><a href='#'><span>Dashboard</span></a></li>
+                <li class='active'><a href='{{ path_for('admin_dashboard_show') }}'><span>Dashboard</span></a></li>
                 <li class='has-sub'><a href='#'><span>Nourriture</span></a>
                     <ul>
                         <li><a href='#'><span>Non-composée</span></a></li>
                         <li><a href='#'><span>Composée</span></a></li>
+                        <li><a href='#'><span>Ingrédients</span></a></li>
                     </ul>
                 </li>
-                <li><a href='#'><span>Boissons</span></a></li>
+                <li><a href='{{ path_for('admin_drinks_show') }}'><span>Boissons</span></a></li>
                 <li><a href='#'><span>Happy hours</span></a></li>
                 <li class='has-sub'><a href='#'><span>Commandes</span></a>
                     <ul>

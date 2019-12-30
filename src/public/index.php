@@ -20,6 +20,7 @@ require '../app/Routes/home.php';
 require '../app/Routes/auth.php';
 require '../app/Routes/menu.php';
 require '../app/Routes/Admin/dashboard.php';
+require '../app/Routes/Admin/drink.php';
 
 
 $app->run();
