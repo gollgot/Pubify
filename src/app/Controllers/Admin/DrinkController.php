@@ -10,7 +10,7 @@ use Slim\Http\Response;
 class DrinkController extends Controller
 {
 
-    public function showAction(Request $request, Response $response) {
+    public function indexAction(Request $request, Response $response) {
         $stmt = $this->container->db->query("SELECT product_name, unit_name, quantity, price, DATE_FORMAT(startSaleDate, '%d.%m.%Y %H:%i') as startSaleDate, DATE_FORMAT(endSaleDate, '%d.%m.%Y %H:%i') as endSaleDate, alcoholLevel FROM drinks ORDER BY quantity");
         $drinks = $stmt->fetchAll();
 

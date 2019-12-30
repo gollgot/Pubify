@@ -5,5 +5,5 @@ use App\Middlewares\AuthMiddleware;
 
 $app
     ->get('/admin/dashboard', DashboardController::class.":showAction")
-    ->setName("admin_dashboard_show")
+    ->setName("admin_dashboard")
     ->add(new AuthMiddleware($container));
