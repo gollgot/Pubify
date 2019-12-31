@@ -73,8 +73,7 @@ BEGIN
 END $$
 
 -- TODO: voir comment faire pour le before update (décision à prendre)
-/*
-DROP TRIGGER IF EXISTS before_buyable_customer_order_insert
+DROP TRIGGER IF EXISTS before_buyable_customer_order_insert;
 CREATE TRIGGER before_buyable_customer_order_insert
 BEFORE INSERT ON Buyable_CustomerOrder
 FOR EACH ROW
@@ -83,9 +82,9 @@ BEGIN
     DECLARE error BOOLEAN;
 
     SET stock_id = (
-        SELECT idStock
-        FROM Product
-        WHERE id = NEW.idBuyable
+        SELECT id
+        FROM Stock
+        WHERE idProduct = NEW.idBuyable
     );
     SET error = false;
 
@@ -93,11 +92,9 @@ BEGIN
         IF (
             SELECT COUNT(*)
             FROM Food_Ingredient
-                INNER JOIN Product
-                    ON Food_Ingredient.idIngredient = Product.id
                 INNER JOIN Stock
-                    ON Product.idStock = Stock.id
-            WHERE idFood = NEW.idBuyable
+                    ON Food_Ingredient.idIngredient = Stock.idProduct
+            WHERE Food_Ingredient.idFood = NEW.idBuyable
             AND Stock.quantity < Food_Ingredient.quantity * NEW.quantity
         ) THEN
             SET error = true;
@@ -114,7 +111,6 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Not enough stock for the order';
     END IF;
-END
-*/
+END $$
 
 DELIMITER ;
