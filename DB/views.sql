@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS waiters;
 CREATE VIEW waiters
 AS
     SELECT
@@ -9,6 +10,7 @@ AS
         INNER JOIN Staff
             ON Staff.id = Waiter.idStaff;
 
+DROP VIEW IF EXISTS managers;
 CREATE VIEW managers
 AS
     SELECT
@@ -20,6 +22,7 @@ AS
         INNER JOIN Staff
             ON Staff.id = Manager.idStaff;
 
+DROP VIEW IF EXISTS customer_orders;
 CREATE VIEW customer_orders
 AS
     SELECT
@@ -35,6 +38,7 @@ AS
         INNER JOIN waiters
             ON waiters.id = CustomerOrder.idWaiter;
 
+DROP VIEW IF EXISTS supply_orders;
 CREATE VIEW supply_orders
 AS
     SELECT
@@ -52,84 +56,93 @@ AS
         INNER JOIN Supplier
             ON SupplyOrder.idSupplier = Supplier.id;
 
-CREATE VIEW product_with_metrics
+DROP VIEW IF EXISTS products;
+CREATE VIEW products
 AS
     SELECT
         Product.id,
         Product.name AS product_name,
         UnitMetric.name AS unit_name,
-        UnitMetric.shortName AS unit_shortName,
-        Product.idStock
+        UnitMetric.shortName AS unit_shortName
     FROM Product
         INNER JOIN UnitMetric
             ON Product.nameUnitMetric = UnitMetric.name;
 
-CREATE VIEW products_with_stock_and_metrics
+DROP VIEW IF EXISTS products_with_stock;
+CREATE VIEW products_with_stock
 AS
     SELECT
-        product_with_metrics.id,
-        product_with_metrics.product_name,
-        product_with_metrics.unit_name,
-        product_with_metrics.unit_shortName,
+        products.*,
         Stock.quantity
-    FROM product_with_metrics
+    FROM products
         RIGHT JOIN Stock
-            ON product_with_metrics.idStock = Stock.id;
+            ON products.id = Stock.idProduct;
 
-CREATE VIEW products_without_stock_and_metrics
+DROP VIEW IF EXISTS buyables;
+CREATE VIEW buyables
 AS
     SELECT
-        product_with_metrics.id,
-        product_with_metrics.product_name,
-        product_with_metrics.unit_name,
-        product_with_metrics.unit_shortName
-    FROM product_with_metrics
-    WHERE product_with_metrics.idStock IS NULL;
+        products.*,
+        Buyable.price,
+        Buyable.startSaleDate,
+        Buyable.endSaleDate
+    FROM Buyable
+        INNER JOIN products
+            ON products.id = Buyable.idProduct;
 
+DROP VIEW IF EXISTS buyable_with_stock;
+CREATE VIEW buyable_with_stock
+AS
+    SELECT
+        buyables.*,
+        Stock.quantity
+    FROM buyables
+        RIGHT JOIN Stock
+            ON buyables.id = Stock.idProduct;
+
+DROP VIEW IF EXISTS drinks;
 CREATE VIEW drinks
 AS
     SELECT
-        products_with_stock_and_metrics.*,
-        Buyable.price,
-        Buyable.startSaleDate,
-        Buyable.endSaleDate,
+        buyable_with_stock.*,
         Drink.alcoholLevel
     FROM Drink
-        INNER JOIN Buyable
-            ON Drink.idBuyable = Buyable.idProduct
-        INNER JOIN products_with_stock_and_metrics
-            ON Buyable.idProduct = products_with_stock_and_metrics.id;
+        INNER JOIN buyable_with_stock
+            ON Drink.idBuyable = buyable_with_stock.id;
 
+DROP VIEW IF EXISTS foods;
 CREATE VIEW foods
 AS
     SELECT
-        product_with_metrics.*,
-        Buyable.price,
-        Buyable.startSaleDate,
-        Buyable.endSaleDate
+        buyables.*
     FROM Food
-        INNER JOIN Buyable
-            ON Food.idBuyable = Buyable.idProduct
-        INNER JOIN product_with_metrics
-            ON Buyable.idProduct = product_with_metrics.id;
+        INNER JOIN buyables
+            ON Food.idBuyable = buyables.id;
 
+DROP VIEW IF EXISTS food_with_stock;
 CREATE VIEW food_with_stock
 AS
     SELECT
-        products_with_stock_and_metrics.*,
-        Buyable.price,
-        Buyable.startSaleDate,
-        Buyable.endSaleDate
+        buyable_with_stock.*
     FROM Food
-        INNER JOIN Buyable
-            ON Food.idBuyable = Buyable.idProduct
-        INNER JOIN products_with_stock_and_metrics
-            ON products_with_stock_and_metrics.id = Buyable.idProduct;
+        INNER JOIN buyable_with_stock
+            ON Food.idBuyable = buyable_with_stock.id;
 
+DROP VIEW IF EXISTS food_without_stock;
+CREATE VIEW food_without_stock
+AS
+    SELECT
+        foods.*
+    FROM foods
+        LEFT JOIN Stock
+            ON foods.id = Stock.idProduct
+    WHERE Stock.id IS NULL;
+
+DROP VIEW IF EXISTS ingredients;
 CREATE VIEW ingredients
 AS
     SELECT
-        products_with_stock_and_metrics.*
+        products_with_stock.*
     FROM Ingredient
-        INNER JOIN products_with_stock_and_metrics
-            ON Ingredient.idProduct = products_with_stock_and_metrics.id;
+        INNER JOIN products_with_stock
+            ON Ingredient.idProduct = products_with_stock.id;
