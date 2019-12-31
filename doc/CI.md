@@ -4,10 +4,10 @@
 * La durée (duration) d’une happy hour ne peut pas être négative (DONE).
 * Le pourcentage de réduction d’une boisson d’une happy hour doit être supérieur à 0 et inférieur ou égal à 100 (DONE).
 * Il ne peut pas y avoir deux happy hours qui se chevauchent (même période). (DONE)
-* Un serveur ne peut pas prendre une commande client sur un produit qui est en quantité insuffisante (ou ingrédient qui le compose). (TODO)
+* Un serveur ne peut pas prendre une commande client sur un produit qui est en quantité insuffisante (ou ingrédient qui le compose). (DONE, INSERT)
 * On ne peut pas avoir en stock de la nourriture qui est composé d’ingrédients. (DONE)
-* On ne peut pas commander chez un fournisseur de la nourriture qui est composée d’ingrédients.
-* Un Staff ne peut plus rien faire s’il est supprimé.
+* On ne peut pas commander chez un fournisseur de la nourriture qui est composée d’ingrédients. (DONE, INSERT)
+* Un Staff ne peut plus rien faire s’il est supprimé. (DONE, A finaliser côté applicatif)
 * Dans la table Buyable_CustomerOrder la quantité doit être supérieur à 0.
 * Dans la table Product_SupplyOrder la quantité doit être supérieur à 0.
 * Dans la la table Food_Ingredient la quantité doit être supérieur à 0.

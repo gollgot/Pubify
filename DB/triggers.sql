@@ -113,4 +113,91 @@ BEGIN
     END IF;
 END $$
 
+-- TODO: voir comment faire pour le before update (décision à prendre)
+DROP TRIGGER IF EXISTS before_product_supply_order_insert;
+CREATE TRIGGER before_product_supply_order_insert
+BEFORE INSERT ON Product_SupplyOrder
+FOR EACH ROW
+BEGIN
+
+    IF (
+        SELECT id
+        FROM products_with_stock
+        WHERE id = NEW.idProduct
+    ) IS NULL THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot order a product composed with ingredients';
+    END IF;
+END $$
+
+DROP TRIGGER IF EXISTS before_customer_order_insert;
+CREATE TRIGGER before_customer_order_insert
+BEFORE INSERT ON CustomerOrder
+FOR EACH ROW
+BEGIN
+    IF (
+        SELECT active
+        FROM Waiter
+        WHERE idStaff = NEW.idWaiter
+    ) = 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A deleted waiter cannot take an order';
+    END IF;
+END $$
+
+DROP TRIGGER IF EXISTS before_customer_order_update;
+CREATE TRIGGER before_customer_order_update
+BEFORE UPDATE ON CustomerOrder
+FOR EACH ROW
+BEGIN
+    IF (
+           SELECT active
+           FROM Waiter
+           WHERE idStaff = NEW.idWaiter
+    ) = 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A deleted waiter cannot be assigned to an order';
+    END IF;
+END $$
+
+DROP TRIGGER IF EXISTS before_supply_order_insert;
+CREATE TRIGGER before_supply_order_insert
+BEFORE INSERT ON SupplyOrder
+FOR EACH ROW
+BEGIN
+    IF (
+           SELECT active
+           FROM Manager
+           WHERE idStaff = NEW.idManager
+    ) = 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A deleted manager cannot take an order';
+    END IF;
+END $$
+
+DROP TRIGGER IF EXISTS before_supply_order_update;
+CREATE TRIGGER before_supply_order_update
+BEFORE UPDATE ON SupplyOrder
+FOR EACH ROW
+BEGIN
+    IF (
+           SELECT active
+           FROM Manager
+           WHERE idStaff = NEW.idManager
+    ) = 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A deleted manager cannot be assigned to an order';
+    END IF;
+END $$
+
 DELIMITER ;
