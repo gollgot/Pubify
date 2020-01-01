@@ -22,7 +22,7 @@ BEGIN
     RETURN IF(num < 0, TRUE, FALSE);
 END $$
 
-DROP PROCEDURE IF EXISTS is_negative_time $$
+DROP FUNCTION IF EXISTS is_negative_time $$
 CREATE FUNCTION is_negative_time(`time` TIME)
 RETURNS BOOLEAN
 DETERMINISTIC
