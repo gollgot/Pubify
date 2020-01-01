@@ -6,7 +6,7 @@ DELIMITER $$
 -- GENERAL USAGE PROCEDURES n FUNCTIONS --
 -- ------------------------------------ --
 
-DROP PROCEDURE IF EXISTS is_negative_decimal $$
+DROP FUNCTION IF EXISTS is_negative_decimal $$
 CREATE FUNCTION is_negative_decimal(num DECIMAL)
 RETURNS BOOLEAN
 DETERMINISTIC
@@ -14,7 +14,7 @@ BEGIN
     RETURN IF(num < 0, TRUE, FALSE);
 END $$
 
-DROP PROCEDURE IF EXISTS is_negative_int $$
+DROP FUNCTION IF EXISTS is_negative_int $$
 CREATE FUNCTION is_negative_int(num INT)
 RETURNS BOOLEAN
 DETERMINISTIC

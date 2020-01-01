@@ -97,7 +97,7 @@ AS
         buyables.*,
         Stock.quantity
     FROM buyables
-        RIGHT JOIN Stock
+        LEFT JOIN Stock
             ON buyables.id = Stock.idProduct;
 
 DROP VIEW IF EXISTS drinks;
