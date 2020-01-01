@@ -1,0 +1,76 @@
+{% extends 'Layout/admin_layout.html.twig' %}
+
+{% block title %}Nouvelle boisson{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            {% include 'FlashMessages/error.html.twig' %}
+
+            <h1>Nouvelle boisson</h1>
+
+            <form id="drinks-create-form" action="{{ path_for('admin_drinks_store') }}" method="post">
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <span class="text-danger">* Champs obligatoire</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="drinks-create-name">Nom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="drinks-create-name" name="name" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="drinks-create-unit">Unité <span class="text-danger">*</span></label>
+                            <select id="drinks-create-unit" class="form-control" name="nameUnitMetric">
+                                {% for unitMetric in unitMetrics%}
+                                    <option>{{ unitMetric.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="drinks-create-alcoholLevel">Pourcentage d'alcool <span class="text-danger">*</span></label>
+                            <input type="number" min="0" max="100" step="0.5" class="form-control" id="drinks-create-alcoholLevel" name="alcoholLevel" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="drinks-create-price">Prix CHF <span class="text-danger">*</span></label>
+                            <input type="number" min ="0" step="0.05" class="form-control" id="drinks-create-price" name="price" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="drinks-create-startSaleDate">Date / Heure début de vente <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" id="drinks-create-startSaleDate" name="startSaleDate" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label for="drinks-create-endSaleDate">Date / Heure fin de vente </label>
+                            <input type="datetime-local" class="form-control" id="drinks-create-endSaleDate" name="endSaleDate">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-success">Create</button>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}

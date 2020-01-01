@@ -28,9 +28,9 @@ class Auth
      * @return bool True if the user has been logged in, false otherwise
      */
     public function attempt($email, $password){
-        $stmt = $this->pdo->prepare("SELECT * FROM Staff WHERE email = :email");
-        $stmt->execute([':email' => $email]);
-        $user = $stmt->fetch();
+        $query = $this->pdo->prepare("SELECT * FROM Staff WHERE email = :email");
+        $query->execute([':email' => $email]);
+        $user = $query->fetch();
 
         // User exists and password match
         if($user != false && $user['password'] == $password){
@@ -57,9 +57,9 @@ class Auth
      */
     public function user(){
         if($this->check()){
-            $stmt = $this->pdo->prepare("SELECT * FROM Staff WHERE id = :id");
-            $stmt->execute([':id' => $_SESSION["user"]]);
-            return $stmt->fetch();
+            $query = $this->pdo->prepare("SELECT * FROM Staff WHERE id = :id");
+            $query->execute([':id' => $_SESSION["user"]]);
+            return $query->fetch();
         }else{
             return null;
         }
