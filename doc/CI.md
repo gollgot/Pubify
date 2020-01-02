@@ -12,5 +12,5 @@
 * Dans la table Product_SupplyOrder la quantité doit être supérieur à 0. (DONE)
 * Dans la la table Food_Ingredient la quantité doit être supérieur à 0. (DONE)
 * La date de fin de vente doit être plus grande que la date de début. (DONE)
-* Les produits d’un Happy Hour doivent être disponibles pour toute la durée de celle-ci.
+* Les produits d’un Happy Hour doivent être disponibles pour toute la durée de celle-ci. (DONE)
 * Un Buyable peut être commandé par un client seulement s’il est disponible (i.e. date de commande entre date début et fin de vente).
