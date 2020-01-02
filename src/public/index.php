@@ -21,6 +21,7 @@ require '../app/Routes/auth.php';
 require '../app/Routes/menu.php';
 require '../app/Routes/Admin/dashboard.php';
 require '../app/Routes/Admin/drinks.php';
+require '../app/Routes/Admin/happyhours.php';
 
 
 $app->run();
