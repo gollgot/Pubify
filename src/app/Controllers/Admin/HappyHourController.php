@@ -29,15 +29,4 @@ class HappyHourController extends Controller
         ]);
     }
 
-
-    /**
-     * Check if the value is empty (zero exclude)
-     *
-     * @param $val
-     * @return bool
-     */
-    private function is_empty($val) {
-        return empty($val) && $val !== "0";
-    }
-
 }
