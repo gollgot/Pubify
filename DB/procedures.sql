@@ -140,7 +140,7 @@ BEGIN
     END IF;
 END $$
 
-DROP PROCEDURE check_drink_sale_date_within_happy_hour_duration $$
+DROP PROCEDURE IF EXISTS check_drink_sale_date_within_happy_hour_duration $$
 CREATE PROCEDURE check_drink_sale_date_within_happy_hour_duration(startAtHappyHour DATETIME, idDrink INT)
 BEGIN
     DECLARE end_drink_sale DATETIME;
