@@ -235,4 +235,20 @@ BEGIN
     CALL check_quantity_not_zero(NEW.quantity);
 END $$
 
+DROP TRIGGER IF EXISTS before_buyable_insert $$
+CREATE TRIGGER before_buyable_insert
+BEFORE INSERT ON Buyable
+FOR EACH ROW
+BEGIN
+    CALL check_start_sale_before_end_sale(NEW.startSaleDate, NEW.endSaleDate);
+END $$
+
+DROP TRIGGER IF EXISTS before_buyable_update $$
+CREATE TRIGGER before_buyable_update
+BEFORE UPDATE ON Buyable
+FOR EACH ROW
+BEGIN
+    CALL check_start_sale_before_end_sale(NEW.startSaleDate, NEW.endSaleDate);
+END $$
+
 DELIMITER ;

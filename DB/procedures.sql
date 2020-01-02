@@ -37,6 +37,7 @@ DETERMINISTIC
 BEGIN
     RETURN IF(value BETWEEN min AND max, TRUE, FALSE);
 END $$
+
 -- ------------------------------- --
 -- SPECIFIC PROCEDURES n FUNCTIONS --
 -- ------------------------------- --
@@ -117,6 +118,17 @@ BEGIN
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'The quantity can\'t be 0 or lower';
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_start_sale_before_end_sale $$
+CREATE PROCEDURE check_start_sale_before_end_sale(`start` DATETIME, `end` DATETIME)
+BEGIN
+    IF `start` > `end` THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Starting sale date can\'t be greater than the ending date';
     END IF;
 END $$
 
