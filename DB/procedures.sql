@@ -6,22 +6,6 @@ DELIMITER $$
 -- GENERAL USAGE PROCEDURES n FUNCTIONS --
 -- ------------------------------------ --
 
-DROP FUNCTION IF EXISTS is_negative_decimal $$
-CREATE FUNCTION is_negative_decimal(num DECIMAL)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-    RETURN IF(num < 0, TRUE, FALSE);
-END $$
-
-DROP FUNCTION IF EXISTS is_negative_int $$
-CREATE FUNCTION is_negative_int(num INT)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-    RETURN IF(num < 0, TRUE, FALSE);
-END $$
-
 DROP FUNCTION IF EXISTS is_negative_time $$
 CREATE FUNCTION is_negative_time(`time` TIME)
 RETURNS BOOLEAN
@@ -30,6 +14,21 @@ BEGIN
     RETURN IF(`time` < 0, TRUE, FALSE);
 END $$
 
+DROP FUNCTION IF EXISTS within_range_int $$
+CREATE FUNCTION within_range_int(min INT, max INT, value INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    RETURN IF(value BETWEEN min AND max, TRUE, FALSE);
+END $$
+
+DROP FUNCTION IF EXISTS within_range_decimal $$
+CREATE FUNCTION within_range_decimal(min DECIMAL, max DECIMAL, value DECIMAL)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    RETURN IF(value BETWEEN min AND max, TRUE, FALSE);
+END $$
 -- ------------------------------- --
 -- SPECIFIC PROCEDURES n FUNCTIONS --
 -- ------------------------------- --
@@ -38,7 +37,7 @@ END $$
 DROP PROCEDURE IF EXISTS validate_alcohol_level $$
 CREATE PROCEDURE validate_alcohol_level(alcohol_level DECIMAL)
 BEGIN
-    IF is_negative_decimal(alcohol_level) THEN
+    IF NOT within_range_decimal(0, 100, alcohol_level) THEN
         -- return an `unhandeled used-defined exception`
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'
@@ -55,8 +54,7 @@ BEGIN
     SET max_reduction_percent = 100;
     SET min_reduction_percent = 0;
 
-    -- TODO maybe create a function `within_range` ?
-    IF reduction <= min_reduction_percent OR reduction > max_reduction_percent THEN
+    IF NOT within_range_int(0, 100, reduction) THEN
         -- return an `unhandeled used-defined exception`
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'
