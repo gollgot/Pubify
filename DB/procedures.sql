@@ -38,6 +38,14 @@ BEGIN
     RETURN IF(value BETWEEN min AND max, TRUE, FALSE);
 END $$
 
+DROP FUNCTION IF EXISTS within_range_datetime $$
+CREATE FUNCTION within_range_datetime(min DATETIME, max DATETIME, value DATETIME)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    RETURN IF(value BETWEEN min AND max, TRUE, FALSE);
+END $$
+
 -- ------------------------------- --
 -- SPECIFIC PROCEDURES n FUNCTIONS --
 -- ------------------------------- --
@@ -130,6 +138,33 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Starting sale date can\'t be greater than the ending date';
     END IF;
+END $$
+
+DROP PROCEDURE check_drink_sale_date_within_happy_hour_duration $$
+CREATE PROCEDURE check_drink_sale_date_within_happy_hour_duration(startAtHappyHour DATETIME, idDrink INT)
+BEGIN
+    DECLARE end_drink_sale DATETIME;
+    DECLARE happy_hour_duration TIME;
+
+    SET end_drink_sale = (
+        SELECT endSaleDate
+        FROM Buyable
+        WHERE idProduct = idDrink
+    );
+
+    SET happy_hour_duration = (
+        SELECT duration
+        FROM HappyHour
+        WHERE startAt = startAtHappyHour
+    );
+
+    if NOT within_range_datetime(startAtHappyHour, ADDTIME(startAtHappyHour, happy_hour_duration), end_drink_sale) THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Chosen drink can\'t be sold during the whole happy hour';
+    END IF;
+
 END $$
 
 DELIMITER ;

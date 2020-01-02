@@ -251,4 +251,20 @@ BEGIN
     CALL check_start_sale_before_end_sale(NEW.startSaleDate, NEW.endSaleDate);
 END $$
 
+DROP TRIGGER IF EXISTS before_drink_happy_hour_insert $$
+CREATE TRIGGER before_drink_happy_hour_insert
+BEFORE INSERT ON Drink_HappyHour
+FOR EACH ROW
+BEGIN
+    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink);
+END $$
+
+DROP TRIGGER IF EXISTS before_drink_happy_hour_update $$
+CREATE TRIGGER before_drink_happy_hour_update
+BEFORE UPDATE ON Drink_HappyHour
+FOR EACH ROW
+BEGIN
+    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink);
+END $$
+
 DELIMITER ;
