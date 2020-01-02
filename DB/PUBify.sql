@@ -65,7 +65,7 @@ CREATE TABLE Food (
 CREATE TABLE Food_Ingredient (
     idFood       INT UNSIGNED,
     idIngredient INT UNSIGNED,
-    quantity     DOUBLE UNSIGNED NOT NULL,
+    quantity     SMALLINT UNSIGNED NOT NULL,
     CONSTRAINT PK_Food_Ingredient PRIMARY KEY (idFood, idIngredient)
 ) ENGINE = InnoDB;
 
@@ -139,8 +139,8 @@ CREATE TABLE Product (
 CREATE TABLE Product_SupplyOrder (
     idProduct     INT UNSIGNED,
     idSupplyOrder INT UNSIGNED,
-    price         DOUBLE UNSIGNED   NOT NULL,
-    quantity      SMALLINT UNSIGNED NOT NULL,
+    price         DOUBLE UNSIGNED NOT NULL,
+    quantity      INT UNSIGNED    NOT NULL,
     CONSTRAINT PK_Product_SupplyOrder PRIMARY KEY (idProduct, idSupplyOrder)
 ) ENGINE = InnoDB;
 
@@ -164,7 +164,7 @@ CREATE TABLE Staff (
 -- -----------------------------------------------------
 CREATE TABLE Stock (
     id        INT UNSIGNED AUTO_INCREMENT,
-    quantity  DOUBLE UNSIGNED NOT NULL,
+    quantity  INT UNSIGNED        NOT NULL,
     idProduct INT UNSIGNED UNIQUE NOT NULL,
     CONSTRAINT PK_Stock PRIMARY KEY (id)
 ) ENGINE = InnoDB;
