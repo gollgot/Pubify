@@ -51,6 +51,16 @@ CREATE TABLE Drink (
 
 
 -- -----------------------------------------------------
+-- Table Drink_HappyHour
+-- -----------------------------------------------------
+CREATE TABLE Drink_HappyHour (
+    idDrink          INT UNSIGNED NOT NULL,
+    startAtHappyHour DATETIME     NOT NULL,
+    PRIMARY KEY (startAtHappyHour, idDrink)
+) ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table Food
 -- -----------------------------------------------------
 CREATE TABLE Food (
@@ -88,16 +98,6 @@ CREATE TABLE HappyHour (
 CREATE TABLE Ingredient (
     idProduct INT UNSIGNED,
     CONSTRAINT PK_Ingredient PRIMARY KEY (idProduct)
-) ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table Drink_HappyHour
--- -----------------------------------------------------
-CREATE TABLE Drink_HappyHour (
-    idDrink          INT UNSIGNED NOT NULL,
-    startAtHappyHour DATETIME     NOT NULL,
-    PRIMARY KEY (startAtHappyHour, idDrink)
 ) ENGINE = InnoDB;
 
 
