@@ -112,11 +112,11 @@ END $$
 DROP PROCEDURE IF EXISTS check_quantity_not_zero $$
 CREATE PROCEDURE check_quantity_not_zero(quantity INT)
 BEGIN
-    IF is_negative_int(quantity) THEN
+    IF quantity <= 0 THEN
         -- return an `unhandeled used-defined exception`
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'The quantity can\'t be 0';
+        SET MESSAGE_TEXT = 'The quantity can\'t be 0 or lower';
     END IF;
 END $$
 
