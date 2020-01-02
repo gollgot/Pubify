@@ -6,6 +6,14 @@ DELIMITER $$
 -- GENERAL USAGE PROCEDURES n FUNCTIONS --
 -- ------------------------------------ --
 
+DROP FUNCTION IF EXISTS is_negative_int $$
+CREATE FUNCTION is_negative_int(num INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    RETURN IF(num < 0, TRUE, FALSE);
+END $$
+
 DROP FUNCTION IF EXISTS is_negative_time $$
 CREATE FUNCTION is_negative_time(`time` TIME)
 RETURNS BOOLEAN
@@ -98,6 +106,17 @@ BEGIN
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Composed products can\'t be stocked!';
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_quantity_not_zero $$
+CREATE PROCEDURE check_quantity_not_zero(quantity INT)
+BEGIN
+    IF is_negative_int(quantity) THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'The quantity can\'t be 0';
     END IF;
 END $$
 

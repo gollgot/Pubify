@@ -73,13 +73,15 @@ BEGIN
 END $$
 
 -- TODO: voir comment faire pour le before update (décision à prendre)
-DROP TRIGGER IF EXISTS before_buyable_customer_order_insert;
+DROP TRIGGER IF EXISTS before_buyable_customer_order_insert $$
 CREATE TRIGGER before_buyable_customer_order_insert
 BEFORE INSERT ON Buyable_CustomerOrder
 FOR EACH ROW
 BEGIN
     DECLARE stock_id INT;
     DECLARE error BOOLEAN;
+
+    CALL check_quantity_not_zero(NEW.quantity);
 
     SET stock_id = (
         SELECT id
@@ -113,12 +115,21 @@ BEGIN
     END IF;
 END $$
 
+DROP TRIGGER IF EXISTS before_buyable_customer_order_update $$
+CREATE TRIGGER before_buyable_customer_order_update
+BEFORE UPDATE ON Buyable_CustomerOrder
+FOR EACH ROW
+BEGIN
+    CALL check_quantity_not_zero(NEW.quantity);
+END $$
+
 -- TODO: voir comment faire pour le before update (décision à prendre)
-DROP TRIGGER IF EXISTS before_product_supply_order_insert;
+DROP TRIGGER IF EXISTS before_product_supply_order_insert $$
 CREATE TRIGGER before_product_supply_order_insert
 BEFORE INSERT ON Product_SupplyOrder
 FOR EACH ROW
 BEGIN
+    CALL check_quantity_not_zero(NEW.quantity);
 
     IF (
         SELECT id
@@ -132,7 +143,15 @@ BEGIN
     END IF;
 END $$
 
-DROP TRIGGER IF EXISTS before_customer_order_insert;
+DROP TRIGGER IF EXISTS before_product_supply_order_update $$
+CREATE TRIGGER before_product_supply_order_update
+BEFORE UPDATE ON Product_SupplyOrder
+FOR EACH ROW
+BEGIN
+    CALL check_quantity_not_zero(NEW.quantity);
+END $$
+
+DROP TRIGGER IF EXISTS before_customer_order_insert $$
 CREATE TRIGGER before_customer_order_insert
 BEFORE INSERT ON CustomerOrder
 FOR EACH ROW
@@ -149,7 +168,7 @@ BEGIN
     END IF;
 END $$
 
-DROP TRIGGER IF EXISTS before_customer_order_update;
+DROP TRIGGER IF EXISTS before_customer_order_update $$
 CREATE TRIGGER before_customer_order_update
 BEFORE UPDATE ON CustomerOrder
 FOR EACH ROW
@@ -166,7 +185,7 @@ BEGIN
     END IF;
 END $$
 
-DROP TRIGGER IF EXISTS before_supply_order_insert;
+DROP TRIGGER IF EXISTS before_supply_order_insert $$
 CREATE TRIGGER before_supply_order_insert
 BEFORE INSERT ON SupplyOrder
 FOR EACH ROW
@@ -183,7 +202,7 @@ BEGIN
     END IF;
 END $$
 
-DROP TRIGGER IF EXISTS before_supply_order_update;
+DROP TRIGGER IF EXISTS before_supply_order_update $$
 CREATE TRIGGER before_supply_order_update
 BEFORE UPDATE ON SupplyOrder
 FOR EACH ROW
@@ -198,6 +217,22 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'A deleted manager cannot be assigned to an order';
     END IF;
+END $$
+
+DROP TRIGGER IF EXISTS before_food_ingredient_insert $$
+CREATE TRIGGER before_food_ingredient_insert
+BEFORE INSERT ON Food_Ingredient
+FOR EACH ROW
+BEGIN
+    CALL check_quantity_not_zero(NEW.quantity);
+END $$
+
+DROP TRIGGER IF EXISTS before_food_ingredient_update $$
+CREATE TRIGGER before_food_ingredient_update
+BEFORE UPDATE ON Food_Ingredient
+FOR EACH ROW
+BEGIN
+    CALL check_quantity_not_zero(NEW.quantity);
 END $$
 
 DELIMITER ;
