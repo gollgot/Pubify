@@ -24,7 +24,9 @@
                     </ul>
                 </li>
                 <li><a href='{{ path_for('admin_drinks_index') }}'><span>Boissons</span></a></li>
-                <li><a href='{{ path_for('admin_happyhours_index') }}'><span>Happy hours</span></a></li>
+                {% if hasRole('manager') %}
+                    <li><a href='{{ path_for('admin_happyhours_index') }}'><span>Happy hours</span></a></li>
+                {% endif %}
                 <li class='has-sub'><a href='#'><span>Commandes</span></a>
                     <ul>
                         <li><a href='#'><span>Client</span></a></li>
