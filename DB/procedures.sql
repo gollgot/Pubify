@@ -167,7 +167,7 @@ BEGIN
 
 END $$
 
-DROP PROCEDURE check_buyable_not_ingredient $$
+DROP PROCEDURE IF EXISTS check_buyable_not_ingredient $$
 CREATE PROCEDURE check_buyable_not_ingredient(idBuyable INT)
 BEGIN
     IF (SELECT COUNT(*)
@@ -192,6 +192,34 @@ BEGIN
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'A Buyable can\'t be an Ingredient';
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_drink_not_food $$
+CREATE PROCEDURE check_drink_not_food(idDrink INT)
+BEGIN
+    IF (SELECT COUNT(*)
+        FROM Food
+        WHERE Food.idBuyable = idDrink
+    ) > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A Food can\'t be a Drink';
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_food_not_drink $$
+CREATE PROCEDURE check_food_not_drink(idFood INT)
+BEGIN
+    IF (SELECT COUNT(*)
+        FROM Drink
+        WHERE Drink.idBuyable = idFood
+    ) > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A Drink can\'t be a Food';
     END IF;
 END $$
 

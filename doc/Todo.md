@@ -10,5 +10,5 @@
 * Créer des triggers pour empécher l'execution de `DELETE` sur `Staff`, `Manager` et `Waiter` (DONE)
 * /!\ Faire des triggers pour les héritages `{complete, disjoint}`
     * `Buyable`/`Ingredient` (DONE)
-    * `Drink`/`Food`
+    * `Drink`/`Food` (DONE)
     * `CustomerOrder`/`SupplyOrder`

@@ -7,6 +7,7 @@ CREATE TRIGGER before_drink_insert
 BEFORE INSERT ON Drink
 FOR EACH ROW
 BEGIN
+    CALL check_drink_not_food(NEW.idBuyable);
     CALL validate_alcohol_level(NEW.alcoholLevel);
 END $$
 
@@ -15,7 +16,24 @@ CREATE TRIGGER before_drink_update
 BEFORE UPDATE ON Drink
 FOR EACH ROW
 BEGIN
+    CALL check_drink_not_food(NEW.idBuyable);
     CALL validate_alcohol_level(NEW.alcoholLevel);
+END $$
+
+DROP TRIGGER IF EXISTS before_food_insert $$
+CREATE TRIGGER before_food_insert
+BEFORE INSERT ON Food
+FOR EACH ROW
+BEGIN
+    CALL check_food_not_drink(NEW.idBuyable);
+END $$
+
+DROP TRIGGER IF EXISTS before_food_update $$
+CREATE TRIGGER before_food_update
+BEFORE UPDATE ON Food
+FOR EACH ROW
+BEGIN
+    CALL check_food_not_drink(NEW.idBuyable);
 END $$
 
 DROP TRIGGER IF EXISTS before_happy_hour_insert $$
