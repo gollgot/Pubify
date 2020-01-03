@@ -117,8 +117,8 @@ FROM Food
     INNER JOIN vStockableBuyable
         ON Food.idBuyable = vStockableBuyable.id;
 
-DROP VIEW IF EXISTS vUnstockableFood;
-CREATE VIEW vUnstockableFood
+DROP VIEW IF EXISTS vNonstockableFood;
+CREATE VIEW vNonstockableFood
 AS
 SELECT vFood.*
 FROM vFood
