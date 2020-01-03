@@ -9,6 +9,7 @@ FOR EACH ROW
 BEGIN
     CALL check_drink_not_food(NEW.idBuyable);
     CALL validate_alcohol_level(NEW.alcoholLevel);
+    CALL create_new_stock(NEW.idBuyable);
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_update $$
@@ -34,6 +35,25 @@ BEFORE UPDATE ON Food
 FOR EACH ROW
 BEGIN
     CALL check_food_not_drink(NEW.idBuyable);
+END $$
+
+DROP TRIGGER IF EXISTS before_ingredient_insert $$
+CREATE TRIGGER before_ingredient_insert
+BEFORE INSERT
+ON Ingredient
+FOR EACH ROW
+BEGIN
+    CALL check_ingredient_not_buyable(NEW.idProduct);
+    CALL create_new_stock(NEW.idProduct);
+END $$
+
+DROP TRIGGER IF EXISTS before_ingredient_update $$
+CREATE TRIGGER before_ingredient_update
+BEFORE UPDATE
+ON Ingredient
+FOR EACH ROW
+BEGIN
+    CALL check_ingredient_not_buyable(NEW.idProduct);
 END $$
 
 DROP TRIGGER IF EXISTS before_happy_hour_insert $$
@@ -322,24 +342,6 @@ BEFORE UPDATE ON Drink_HappyHour
 FOR EACH ROW
 BEGIN
     CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink);
-END $$
-
-DROP TRIGGER IF EXISTS before_ingredient_insert $$
-CREATE TRIGGER before_ingredient_insert
-BEFORE INSERT
-ON Ingredient
-FOR EACH ROW
-BEGIN
-    CALL check_ingredient_not_buyable(NEW.idProduct);
-END $$
-
-DROP TRIGGER IF EXISTS before_ingredient_update $$
-CREATE TRIGGER before_ingredient_update
-BEFORE UPDATE
-ON Ingredient
-FOR EACH ROW
-BEGIN
-    CALL check_ingredient_not_buyable(NEW.idProduct);
 END $$
 
 DELIMITER ;

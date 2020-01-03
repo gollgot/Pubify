@@ -251,4 +251,11 @@ BEGIN
     END IF;
 END $$
 
+DROP PROCEDURE IF EXISTS create_new_stock $$
+CREATE PROCEDURE create_new_stock(idProduct INT)
+BEGIN
+    INSERT INTO Stock (quantity, idProduct) VALUES (0, idProduct);
+END $$
+
+
 DELIMITER ;
