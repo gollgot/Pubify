@@ -167,4 +167,32 @@ BEGIN
 
 END $$
 
+DROP PROCEDURE check_buyable_not_ingredient $$
+CREATE PROCEDURE check_buyable_not_ingredient(idBuyable INT)
+BEGIN
+    IF (SELECT COUNT(*)
+        FROM Ingredient
+        WHERE Ingredient.idProduct = idBuyable
+    ) > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'An Ingredient can\'t be a Buyable';
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_ingredient_not_buyable $$
+CREATE PROCEDURE check_ingredient_not_buyable(idIngredient INT)
+BEGIN
+    IF (SELECT COUNT(*)
+        FROM Buyable
+        WHERE Buyable.idProduct = idIngredient
+    ) > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A Buyable can\'t be an Ingredient';
+    END IF;
+END $$
+
 DELIMITER ;

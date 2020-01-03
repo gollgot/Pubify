@@ -269,6 +269,7 @@ CREATE TRIGGER before_buyable_insert
 BEFORE INSERT ON Buyable
 FOR EACH ROW
 BEGIN
+    CALL check_buyable_not_ingredient(NEW.idProduct);
     CALL check_start_sale_before_end_sale(NEW.startSaleDate, NEW.endSaleDate);
 END $$
 
@@ -277,6 +278,7 @@ CREATE TRIGGER before_buyable_update
 BEFORE UPDATE ON Buyable
 FOR EACH ROW
 BEGIN
+    CALL check_buyable_not_ingredient(NEW.idProduct);
     CALL check_start_sale_before_end_sale(NEW.startSaleDate, NEW.endSaleDate);
 END $$
 
@@ -294,6 +296,24 @@ BEFORE UPDATE ON Drink_HappyHour
 FOR EACH ROW
 BEGIN
     CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink);
+END $$
+
+DROP TRIGGER IF EXISTS before_ingredient_insert $$
+CREATE TRIGGER before_ingredient_insert
+BEFORE INSERT
+ON Ingredient
+FOR EACH ROW
+BEGIN
+    CALL check_ingredient_not_buyable(NEW.idProduct);
+END $$
+
+DROP TRIGGER IF EXISTS before_ingredient_update $$
+CREATE TRIGGER before_ingredient_update
+BEFORE UPDATE
+ON Ingredient
+FOR EACH ROW
+BEGIN
+    CALL check_ingredient_not_buyable(NEW.idProduct);
 END $$
 
 DELIMITER ;
