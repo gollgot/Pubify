@@ -9,7 +9,7 @@ FOR EACH ROW
 BEGIN
     CALL check_drink_not_food(NEW.idBuyable);
     CALL validate_alcohol_level(NEW.alcoholLevel);
-    CALL create_new_stock(NEW.idBuyable);
+    CALL create_new_empty_stock(NEW.idBuyable);
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_update $$
@@ -44,7 +44,7 @@ ON Ingredient
 FOR EACH ROW
 BEGIN
     CALL check_ingredient_not_buyable(NEW.idProduct);
-    CALL create_new_stock(NEW.idProduct);
+    CALL create_new_empty_stock(NEW.idProduct);
 END $$
 
 DROP TRIGGER IF EXISTS before_ingredient_update $$
