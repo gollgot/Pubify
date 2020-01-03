@@ -223,4 +223,32 @@ BEGIN
     END IF;
 END $$
 
+DROP PROCEDURE IF EXISTS check_customer_order_not_supply_order $$
+CREATE PROCEDURE check_customer_order_not_supply_order(idCustomerOrder INT)
+BEGIN
+    IF (SELECT COUNT(*)
+        FROM SupplyOrder
+        WHERE SupplyOrder.idOrder = idCustomerOrder
+    ) > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A CustomerOrder can\'t be a SupplyOrder';
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_supply_order_not_customer_order $$
+CREATE PROCEDURE check_supply_order_not_customer_order(idSupplyOrder INT)
+BEGIN
+    IF (SELECT COUNT(*)
+        FROM CustomerOrder
+        WHERE CustomerOrder.idOrder = idSupplyOrder
+    ) > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A SupplyOrder can\'t be a CustomerOrder';
+    END IF;
+END $$
+
 DELIMITER ;

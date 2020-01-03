@@ -203,6 +203,8 @@ CREATE TRIGGER before_customer_order_insert
 BEFORE INSERT ON CustomerOrder
 FOR EACH ROW
 BEGIN
+    CALL check_customer_order_not_supply_order(NEW.idOrder);
+
     IF (
         SELECT active
         FROM Waiter
@@ -220,6 +222,8 @@ CREATE TRIGGER before_customer_order_update
 BEFORE UPDATE ON CustomerOrder
 FOR EACH ROW
 BEGIN
+    CALL check_customer_order_not_supply_order(NEW.idOrder);
+
     IF (
            SELECT active
            FROM Waiter
@@ -237,6 +241,8 @@ CREATE TRIGGER before_supply_order_insert
 BEFORE INSERT ON SupplyOrder
 FOR EACH ROW
 BEGIN
+    CALL check_supply_order_not_customer_order(NEW.idOrder);
+
     IF (
            SELECT active
            FROM Manager
@@ -254,6 +260,8 @@ CREATE TRIGGER before_supply_order_update
 BEFORE UPDATE ON SupplyOrder
 FOR EACH ROW
 BEGIN
+    CALL check_supply_order_not_customer_order(NEW.idOrder);
+
     IF (
            SELECT active
            FROM Manager

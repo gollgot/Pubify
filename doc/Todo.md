@@ -11,4 +11,4 @@
 * /!\ Faire des triggers pour les héritages `{complete, disjoint}`
     * `Buyable`/`Ingredient` (DONE)
     * `Drink`/`Food` (DONE)
-    * `CustomerOrder`/`SupplyOrder`
+    * `CustomerOrder`/`SupplyOrder` (DONE)
