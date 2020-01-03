@@ -8,3 +8,4 @@
 * Pour l'alcoholLevel dans drink, attention il peut pas etre > 100 (DONE)
 * Créer un trigger after insert pour tous les produits (autre que nourriture composée) pour l'ajouter directement dans le stock à une quantité de 0
 * Créer des triggers pour empécher l'execution de `DELETE` sur `Staff`, `Manager` et `Waiter` (DONE)
+* /!\ Faire des triggers pour les héritages `{complete, disjoint}`
