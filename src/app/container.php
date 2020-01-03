@@ -1,5 +1,7 @@
 <?php
 
+use Twig\TwigFunction;
+
 $container = $app->getContainer();
 
 // DB connection
@@ -36,6 +38,12 @@ $container['view'] = function ($container) {
         'user' => $container->auth->user(),
     ]);
     $view->getEnvironment()->addGlobal('flash', $container->flash);
+
+    // Add a new twig function to check if the connected user has the asked role or not
+    $funcHasRole = new TwigFunction('hasRole', function($role) use ($container) {
+        return $container['auth']->hasRole($role);
+    });
+    $view->getEnvironment()->addFunction($funcHasRole);
 
     return $view;
 };

@@ -71,4 +71,29 @@ class Auth
     public function logout(){
         unset($_SESSION['user']);
     }
+
+    /**
+     * Method which check if the current user has the asked role or not.
+     * Possible role : waiter or manager
+     *
+     * @param $role The asked role
+     * @return bool
+     */
+    public function hasRole($role){
+        $hasAskedRole = false;
+        $userId  = $this->user()['id'];
+
+        // Check role only if a user is connected
+        if(!empty($userId)) {
+            if ($role == 'waiter') {
+                $query = $this->pdo->query("SELECT COUNT(*) AS isWaiter FROM Waiter WHERE idStaff = ".$userId);
+                $hasAskedRole = $query->fetch()['isWaiter'] > 0;
+            } else if ($role == 'manager') {
+                $query = $this->pdo->query("SELECT COUNT(*) AS isManager FROM Manager WHERE idStaff = ".$userId);
+                $hasAskedRole = $query->fetch()['isManager'] > 0;
+            }
+        }
+
+        return $hasAskedRole;
+    }
 }
