@@ -1,10 +1,34 @@
+DROP VIEW IF EXISTS vActiveStaff;
+CREATE VIEW vActiveStaff
+AS
+SELECT Staff.id, 
+	   Staff.email,
+	   Staff.name,
+       Staff.lastname,
+       Staff.password
+FROM Staff 
+		INNER JOIN 
+			Waiter ON Staff.id = Waiter.idStaff
+WHERE active = 1
+UNION
+SELECT Staff.id, 
+	   Staff.email,
+	   Staff.name,
+       Staff.lastname,
+       Staff.password
+FROM Staff
+		INNER JOIN 
+			Manager ON Staff.id = Manager.idStaff
+WHERE active = 1;
+
 DROP VIEW IF EXISTS vWaiter;
 CREATE VIEW vWaiter
 AS
 SELECT Staff.id,
        Staff.name,
        Staff.lastname,
-       Staff.email
+       Staff.email,
+       Waiter.active
 FROM Waiter
     INNER JOIN Staff
         ON Staff.id = Waiter.idStaff;
@@ -15,7 +39,8 @@ AS
 SELECT Staff.id,
        Staff.name,
        Staff.lastname,
-       Staff.email
+       Staff.email,
+       Manager.active
 FROM Manager
     INNER JOIN Staff
         ON Staff.id = Manager.idStaff;

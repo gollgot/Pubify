@@ -21,7 +21,7 @@ class DrinkController extends Controller
         // Fetch the pdo connection from the container dependency
         $pdo = $this->container->db;
 
-        $query = $pdo->query("SELECT product_name, unit_name, quantity, price, DATE_FORMAT(startSaleDate, '%d.%m.%Y %H:%i') as startSaleDate, DATE_FORMAT(endSaleDate, '%d.%m.%Y %H:%i') as endSaleDate, alcoholLevel FROM drinks ORDER BY quantity");
+        $query = $pdo->query("SELECT product_name, unit_name, quantity, price, DATE_FORMAT(startSaleDate, '%d.%m.%Y %H:%i') as startSaleDate, DATE_FORMAT(endSaleDate, '%d.%m.%Y %H:%i') as endSaleDate, alcoholLevel FROM vDrink ORDER BY quantity");
         $drinks = $query->fetchAll();
 
         return $this->render($response, 'Admin/Drinks/index.html.twig', [

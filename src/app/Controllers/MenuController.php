@@ -16,7 +16,7 @@ class MenuController extends Controller
      * @return mixed
      */
     public function showAction(Request $request, Response $response) {
-        return $this->render($response, 'Menu/index.html.twig', []);
+        return $this->render($response, 'Menu/show.html.twig', []);
     }
 
 }

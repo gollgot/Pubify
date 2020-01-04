@@ -28,7 +28,7 @@ class Auth
      * @return bool True if the user has been logged in, false otherwise
      */
     public function attempt($email, $password){
-        $query = $this->pdo->prepare("SELECT * FROM Staff WHERE email = :email");
+        $query = $this->pdo->prepare("SELECT * FROM vActiveStaff WHERE email = :email");
         $query->execute([':email' => $email]);
         $user = $query->fetch();
 
@@ -86,10 +86,10 @@ class Auth
         // Check role only if a user is connected
         if(!empty($userId)) {
             if ($role == 'waiter') {
-                $query = $this->pdo->query("SELECT COUNT(*) AS isWaiter FROM Waiter WHERE idStaff = ".$userId);
+                $query = $this->pdo->query("SELECT COUNT(*) AS isWaiter FROM Waiter WHERE idStaff = ".$userId." AND active = 1");
                 $hasAskedRole = $query->fetch()['isWaiter'] > 0;
             } else if ($role == 'manager') {
-                $query = $this->pdo->query("SELECT COUNT(*) AS isManager FROM Manager WHERE idStaff = ".$userId);
+                $query = $this->pdo->query("SELECT COUNT(*) AS isManager FROM Manager WHERE idStaff = ".$userId." AND active = 1");
                 $hasAskedRole = $query->fetch()['isManager'] > 0;
             }
         }
