@@ -114,7 +114,7 @@ AS
 SELECT vBuyable.*,
        Stock.quantity
 FROM vBuyable
-    LEFT JOIN Stock
+    INNER JOIN Stock
         ON vBuyable.id = Stock.idProduct;
 
 DROP VIEW IF EXISTS vDrink;
