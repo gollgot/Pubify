@@ -14,14 +14,14 @@
 
             <table class="table table-hover table-bordered">
                 <thead>
-                <tr>
-                    <th scope="col">Date heure</th>
-                    <th scope="col">Durée</th>
-                    <th scope="col">Réduction</th>
-                    <th scope="col">Boissons</th>
-                    <th scope="col">Créé par</th>
-                    <th scope="col">Action</th>
-                </tr>
+                    <tr>
+                        <th scope="col">Date heure</th>
+                        <th scope="col">Durée</th>
+                        <th scope="col">Réduction</th>
+                        <th scope="col">Boissons</th>
+                        <th scope="col">Créé par</th>
+                        <th scope="col">Action</th>
+                    </tr>
                 </thead>
 
 
@@ -29,10 +29,14 @@
 
                 {% for happyhour in happyhours %}
                     <tr>
-                        <th scope="row">{{ happyhour.startAt }}</th>
+                        <th scope="row">{{ happyhour.startAtFormated }}</th>
                         <td>{{ happyhour.duration }}</td>
-                        <td>{{ happyhour.reductionPercent }} CHF</td>
-                        <td> - </td>
+                        <td>{{ happyhour.reductionPercent }} %</td>
+                        <td>
+                            {% for linkedDrink in happyhour.linkedDrinks %}
+                                {{ linkedDrink.product_name }},
+                            {% endfor %}
+                        </td>
                         <td>{{ happyhour.name }} {{ happyhour.lastname }}</td>
                         <td><a class="btn btn-warning" href="#">Modifier</a></td>
                     </tr>
