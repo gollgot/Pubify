@@ -11,9 +11,9 @@ FROM Staff
         ON Staff.id = Waiter.idStaff
 WHERE active = 1
 UNION
-SELECT Staff.id, 
-	   Staff.email,
-	   Staff.name,
+SELECT Staff.id,
+       Staff.email,
+       Staff.name,
        Staff.lastname,
        Staff.password
 FROM Staff
