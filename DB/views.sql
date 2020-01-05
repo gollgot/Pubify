@@ -1,14 +1,14 @@
 DROP VIEW IF EXISTS vActiveStaff;
 CREATE VIEW vActiveStaff
 AS
-SELECT Staff.id, 
-	   Staff.email,
-	   Staff.name,
+SELECT Staff.id,
+       Staff.email,
+       Staff.name,
        Staff.lastname,
        Staff.password
 FROM Staff 
-		INNER JOIN 
-			Waiter ON Staff.id = Waiter.idStaff
+    INNER JOIN Waiter
+        ON Staff.id = Waiter.idStaff
 WHERE active = 1
 UNION
 SELECT Staff.id, 
@@ -17,8 +17,8 @@ SELECT Staff.id,
        Staff.lastname,
        Staff.password
 FROM Staff
-		INNER JOIN 
-			Manager ON Staff.id = Manager.idStaff
+    INNER JOIN Manager
+        ON Staff.id = Manager.idStaff
 WHERE active = 1;
 
 DROP VIEW IF EXISTS vWaiter;
