@@ -13,7 +13,8 @@ VALUES (1),
        (4);
 
 INSERT INTO Manager (idStaff)
-VALUES (2);
+VALUES (2),
+	   (1);
 
 INSERT INTO Supplier (name)
 VALUES ('Aligro'),
@@ -97,9 +98,17 @@ VALUES (1, 7, 200),
 
 -- Happy Hour
 INSERT INTO HappyHour (startAt, duration, reductionPercent, idManager)
-VALUES ('2019-03-14 16:15', '01:00', 10, 2),
-       ('2019-03-15 21:25', '01:00', 10, 2),
-       ('2019-03-16 23:18', '01:00', 10, 2);
+VALUES ('2020-03-14 16:15', '01:00', 10, 2),
+       ('2020-03-15 21:25', '01:00', 10, 2),
+       ('2020-03-16 23:18', '01:00', 10, 2);
+       
+INSERT INTO Drink_HappyHour (idDrink, startAtHappyHour)
+VALUES(3, '2020-03-14 16:15'),
+	  (4, '2020-03-14 16:15'),
+	  (5, '2020-03-14 16:15'),
+      (5, '2020-03-15 21:25'),
+      (6, '2020-03-15 21:25'),
+      (3, '2020-03-16 23:18');
 
 -- Order
 INSERT INTO `Order` (orderAt, tva)
