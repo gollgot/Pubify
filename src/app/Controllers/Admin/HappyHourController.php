@@ -40,4 +40,24 @@ class HappyHourController extends Controller
         ]);
     }
 
+    /**
+     * Display the happyhour create view to be able to create a new happyhour
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return mixed
+     */
+    public function createAction(Request $request, Response $response) {
+        // Fetch the pdo connection from the container dependency
+        $pdo = $this->container->db;
+
+        // Fetch all drinks that can be
+        $query = $pdo->query("SELECT product_name FROM vDrink");
+        $drinks = $query->fetchAll();
+
+        return $this->render($response, 'Admin/HappyHours/create.html.twig', [
+            'drinks' => $drinks
+        ]);
+    }
+
 }

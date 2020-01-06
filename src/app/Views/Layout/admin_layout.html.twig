@@ -8,6 +8,7 @@
         <title>{% block title %}{% endblock %} | PUB'ify Admin</title>
 
         <link rel="stylesheet" href="/css/lib/bootstrap.min.css" type="text/css" />
+        <link rel="stylesheet" href="/css/lib/select2.min.css" type="text/css" />
         <link rel="stylesheet" href="/css/admin/side_menu.css" type="text/css" />
         <link rel="stylesheet" href="/css/admin/style.css" type="text/css" />
     </head>
@@ -56,10 +57,13 @@
 
         <script type="text/javascript" src="/js/lib/jquery-3.4.1.min.js"></script>
         <script type="text/javascript" src="/js/lib/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/js/lib/select2.full.min.js"></script>
         <script type="text/javascript" src="/js/admin.js"></script>
 
-        {% block specificJS %}
-        {% endblock %}
+        <script>
+            {% block specificJS %}
+            {% endblock %}
+        </script>
 
     </body>
 </html>
