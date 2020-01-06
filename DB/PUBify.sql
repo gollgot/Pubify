@@ -84,8 +84,8 @@ CREATE TABLE Food_Ingredient (
 -- Table HappyHour
 -- -----------------------------------------------------
 CREATE TABLE HappyHour (
-    idManager        INT UNSIGNED,
-    startAt          DATETIME,
+	startAt          DATETIME,
+    idManager        INT UNSIGNED NOT NULL,
     duration         TIME         NOT NULL,
     reductionPercent INT UNSIGNED NOT NULL,
     CONSTRAINT PK_HappyHour PRIMARY KEY (startAt)
