@@ -2,6 +2,13 @@ USE PUBify;
 
 DELIMITER $$
 
+CREATE TRIGGER after_product_insert
+AFTER INSERT ON Product
+FOR EACH ROW
+BEGIN
+    CALL create_new_empty_stock(NEW.id);
+END $$
+
 DROP TRIGGER IF EXISTS before_drink_insert $$
 CREATE TRIGGER before_drink_insert
 BEFORE INSERT ON Drink
@@ -9,7 +16,6 @@ FOR EACH ROW
 BEGIN
     CALL check_drink_not_food(NEW.idBuyable);
     CALL validate_alcohol_level(NEW.alcoholLevel);
-    CALL create_new_empty_stock(NEW.idBuyable);
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_update $$
@@ -44,7 +50,6 @@ ON Ingredient
 FOR EACH ROW
 BEGIN
     CALL check_ingredient_not_buyable(NEW.idProduct);
-    CALL create_new_empty_stock(NEW.idProduct);
 END $$
 
 DROP TRIGGER IF EXISTS before_ingredient_update $$
@@ -148,6 +153,22 @@ BEGIN
     DECLARE stock_id INT;
     DECLARE error BOOLEAN;
 
+    DECLARE finished INT DEFAULT 0;
+    DECLARE ingredient_id INT;
+    DECLARE used_quantity INT;
+
+    -- declare cursor for the buyables ingredients
+    DECLARE cur_ingredient
+        CURSOR FOR (
+            SELECT Food_Ingredient.idIngredient
+            FROM Food_Ingredient
+            WHERE Food_Ingredient.idFood = NEW.idBuyable
+    );
+
+    -- declare NOT FOUND handler
+    DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET finished = 1;
+
     CALL check_quantity_not_zero(NEW.quantity);
 
     SET stock_id = (
@@ -163,8 +184,8 @@ BEGIN
             FROM Food_Ingredient
                 INNER JOIN Stock
                     ON Food_Ingredient.idIngredient = Stock.idProduct
-            WHERE Food_Ingredient.idFood = NEW.idBuyable
-            AND Stock.quantity < Food_Ingredient.quantity * NEW.quantity
+            WHERE Food_Ingredient.idFood = NEW.idBuyable AND
+                  Stock.quantity < Food_Ingredient.quantity * NEW.quantity
         ) THEN
             SET error = true;
         END IF;
@@ -179,6 +200,35 @@ BEGIN
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Not enough stock for the order';
+    END IF;
+
+    -- All good regarding the quantity, so we can deduct it from the stock
+    IF stock_id IS NOT NULL THEN
+        UPDATE Stock
+        SET Stock.quantity = (Stock.quantity - NEW.quantity)
+        WHERE idProduct = NEW.idBuyable;
+    ELSE
+        OPEN cur_ingredient;
+
+        updateIngredientStock: LOOP
+            FETCH cur_ingredient INTO ingredient_id;
+            IF finished = 1 THEN
+                LEAVE updateIngredientStock;
+            END IF;
+
+            SET used_quantity = (
+                SELECT quantity
+                FROM Food_Ingredient
+                WHERE idFood = NEW.idBuyable AND
+                      idIngredient = ingredient_id
+            );
+
+            UPDATE Stock
+            SET Stock.quantity = (Stock.quantity - used_quantity*NEW.quantity)
+            WHERE idProduct = ingredient_id;
+        END LOOP;
+
+        CLOSE cur_ingredient;
     END IF;
 END $$
 
@@ -200,7 +250,7 @@ BEGIN
 
     IF (
         SELECT id
-        FROM products_with_stock
+        FROM vStockableProduct
         WHERE id = NEW.idProduct
     ) IS NULL THEN
         -- return an `unhandeled used-defined exception`
@@ -299,7 +349,26 @@ CREATE TRIGGER before_food_ingredient_insert
 BEFORE INSERT ON Food_Ingredient
 FOR EACH ROW
 BEGIN
+    DECLARE food_stock_quantity INT;
+
     CALL check_quantity_not_zero(NEW.quantity);
+
+    SET food_stock_quantity = (
+        SELECT quantity
+        FROM Stock
+        WHERE idProduct = NEW.idFood
+    );
+
+    /*
+    IF food_stock_quantity = 0 THEN
+        DELETE FROM Stock WHERE idProduct = NEW.idFood;
+    ELSE IF food_stock_quantity > 0 THEN
+        -- return an `unhandeled used-defined exception`
+        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A stockable Food can\'t have Ingredients';
+    END IF;
+     */
 END $$
 
 DROP TRIGGER IF EXISTS before_food_ingredient_update $$
