@@ -257,5 +257,13 @@ BEGIN
     INSERT INTO Stock (quantity, idProduct) VALUES (0, idProduct);
 END $$
 
+DROP PROCEDURE IF EXISTS send_exception $$
+CREATE PROCEDURE send_exception(errorDescription VARCHAR(255))
+BEGIN
+    -- return an `unhandeled used-defined exception`
+    -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = errorDescription;
+END $$
 
 DELIMITER ;
