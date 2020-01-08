@@ -33,7 +33,8 @@ CREATE TRIGGER after_customer_order_delete
     AFTER DELETE ON CustomerOrder
     FOR EACH ROW
 BEGIN
-    -- todo: delete the linked order
+    DELETE FROM `Order`
+    WHERE id = OLD.idOrder;
 END $$
 
 DROP TRIGGER IF EXISTS after_product_supply_order_delete $$
@@ -65,7 +66,8 @@ CREATE TRIGGER after_supply_order_delete
     AFTER DELETE ON SupplyOrder
     FOR EACH ROW
 BEGIN
-    -- todo: delete the linked order
+    DELETE FROM `Order`
+    WHERE id = OLD.idOrder;
 END $$
 
 -- -----------------------------------------------

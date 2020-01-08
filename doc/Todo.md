@@ -18,10 +18,10 @@
     * UPDATE : N/A
     * DELETE : N/A
 
-* CustomerOrder/SupplyOrder
-    * INSERT : Check not SupplyOrder/CustomerOrder and waiter/manager is active (DONE)
-    * UPDATE : Check not SupplyOrder/CustomerOrder and waiter/manager is active (DONE)
-    * DELETE : Delete order entry (TODO)
+* CustomerOrder/SupplyOrder (DONE)
+    * INSERT : Check not SupplyOrder/CustomerOrder and waiter/manager is active
+    * UPDATE : Check not SupplyOrder/CustomerOrder and waiter/manager is active
+    * DELETE : Delete order entry
 
 * Supplier (DONE)
     * INSERT : N/A
