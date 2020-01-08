@@ -102,7 +102,13 @@ CREATE TRIGGER before_buyable_customer_order_delete
     BEFORE DELETE ON Buyable_CustomerOrder
     FOR EACH ROW
 BEGIN
-    -- todo: send error message if last buyable
+    IF (
+           SELECT COUNT(*)
+           FROM Buyable_CustomerOrder
+           WHERE idCustomerOrder = OLD.idCustomerOrder
+       ) = 1 THEN
+        CALL send_exception('There needs to be at least one product by customer order!');
+    END IF;
 END $$
 
 DROP TRIGGER IF EXISTS before_buyable_customer_order_insert $$
@@ -261,7 +267,13 @@ CREATE TRIGGER before_drink_happy_hour_delete
     BEFORE DELETE ON Drink_HappyHour
     FOR EACH ROW
 BEGIN
-    -- todo: send error message if last drink
+    IF (
+           SELECT COUNT(*)
+           FROM Drink_HappyHour
+           WHERE startAtHappyHour = OLD.startAtHappyHour
+       ) = 1 THEN
+        CALL send_exception('There needs to be at least one drink by happy hour!');
+    END IF;
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_happy_hour_insert $$
@@ -309,7 +321,13 @@ CREATE TRIGGER before_food_ingredient_delete
     BEFORE DELETE ON Food_Ingredient
     FOR EACH ROW
 BEGIN
-    -- todo: send error message if last ingredient
+    IF (
+           SELECT COUNT(*)
+           FROM Food_Ingredient
+           WHERE idFood = OLD.idFood
+       ) = 1 THEN
+        CALL send_exception('There needs to be at least one Ingredient by composed food!');
+    END IF;
 END $$
 
 DROP TRIGGER IF EXISTS before_food_ingredient_insert $$
@@ -442,7 +460,13 @@ CREATE TRIGGER before_product_supply_order_delete
     BEFORE DELETE ON Product_SupplyOrder
     FOR EACH ROW
 BEGIN
-    -- todo: send error message if last product
+    IF (
+        SELECT COUNT(*)
+        FROM Product_SupplyOrder
+        WHERE idSupplyOrder = OLD.idSupplyOrder
+    ) = 1 THEN
+        CALL send_exception('There needs to be at least one product by supply order!');
+    END IF;
 END $$
 
 DROP TRIGGER IF EXISTS before_product_supply_order_insert $$
