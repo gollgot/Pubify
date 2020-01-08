@@ -76,7 +76,7 @@ CREATE TRIGGER before_buyable_delete
     BEFORE DELETE ON Buyable
     FOR EACH ROW
 BEGIN
-    -- todo: send error message
+    CALL send_exception('DELETE query not allowed on Buyable');
 END $$
 
 DROP TRIGGER IF EXISTS before_buyable_insert $$
@@ -156,10 +156,7 @@ BEGIN
     END IF;
 
     IF error = true THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Not enough stock for the order';
+        CALL send_exception('Not enough stock for the order');
     END IF;
 
     -- TODO: déplacer dans le after insert
@@ -213,10 +210,7 @@ BEGIN
            FROM Waiter
            WHERE idStaff = NEW.idWaiter
        ) = 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'A deleted waiter cannot take an order';
+        CALL send_exception('A deleted waiter cannot take an order');
     END IF;
 END $$
 
@@ -232,10 +226,7 @@ BEGIN
            FROM Waiter
            WHERE idStaff = NEW.idWaiter
        ) = 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'A deleted waiter cannot be assigned to an order';
+        CALL send_exception('A deleted waiter cannot take an order');
     END IF;
 END $$
 
@@ -244,7 +235,7 @@ CREATE TRIGGER before_drink_delete
     BEFORE DELETE ON Drink
     FOR EACH ROW
 BEGIN
-    -- todo: send error message
+    CALL send_exception('DELETE query not allowed on Drink');
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_insert $$
@@ -294,7 +285,7 @@ CREATE TRIGGER before_food_delete
     BEFORE DELETE ON Food
     FOR EACH ROW
 BEGIN
-    -- todo: send error message
+    CALL send_exception('DELETE query not allowed on Food');
 END $$
 
 DROP TRIGGER IF EXISTS before_food_insert $$
@@ -337,10 +328,7 @@ BEGIN
     );
 
     IF food_stock_quantity > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'A stockable Food can\'t have Ingredients';
+        CALL send_exception('A stockable Food can\'t have Ingredients');
     END IF;
 END $$
 
@@ -360,10 +348,7 @@ BEGIN
     );
 
     IF food_stock_quantity > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'A stockable Food can\'t have Ingredients';
+        CALL send_exception('A stockable Food can\'t have Ingredients');
     END IF;
 END $$
 
@@ -398,7 +383,7 @@ CREATE TRIGGER before_ingredient_delete
     BEFORE DELETE ON Ingredient
     FOR EACH ROW
 BEGIN
-    -- todo: send error message
+    CALL send_exception('DELETE query not allowed on Ingredient');
 END $$
 
 DROP TRIGGER IF EXISTS before_ingredient_insert $$
@@ -424,8 +409,7 @@ CREATE TRIGGER before_manager_delete
 BEFORE DELETE ON Manager
 FOR EACH ROW
 BEGIN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'DELETE query not allowed on `Manager`';
+    CALL send_exception('DELETE query not allowed on Manager');
 END $$
 
 DROP TRIGGER IF EXISTS before_manager_update $$
@@ -440,10 +424,7 @@ BEGIN
 
         -- If there is only one manager in the DB, then he or she can't be deleted
         IF current_nb_managers = 1 THEN
-            -- return an `unhandeled used-defined exception`
-            -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'There needs to be more than one manager to delete one!';
+            CALL send_exception('There needs to be at least one manager!');
         END IF;
     END IF;
 END $$
@@ -453,7 +434,7 @@ CREATE TRIGGER before_product_delete
     BEFORE DELETE ON Product
     FOR EACH ROW
 BEGIN
-    -- todo: send error message
+    CALL send_exception('DELETE query not allowed on Product');
 END $$
 
 DROP TRIGGER IF EXISTS before_product_supply_order_delete $$
@@ -476,10 +457,7 @@ BEGIN
         FROM vStockableProduct
         WHERE id = NEW.idProduct
     ) IS NULL THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Cannot order a product composed with ingredients';
+        CALL send_exception('Cannot order a product composed with ingredients');
     END IF;
 END $$
 
@@ -495,10 +473,7 @@ BEGIN
         FROM vStockableProduct
         WHERE id = NEW.idProduct
     ) IS NULL THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Cannot order a product composed with ingredients';
+        CALL send_exception('Cannot order a product composed with ingredients');
     END IF;
 END $$
 
@@ -507,8 +482,7 @@ CREATE TRIGGER before_staff_delete
     BEFORE DELETE ON Staff
     FOR EACH ROW
 BEGIN
-    SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'DELETE query not allowed on `Staff`';
+    CALL send_exception('DELETE query not allowed on Staff');
 END $$
 
 DROP TRIGGER IF EXISTS before_stock_delete $$
@@ -516,7 +490,7 @@ CREATE TRIGGER before_stock_delete
     BEFORE DELETE ON Stock
     FOR EACH ROW
 BEGIN
-    -- todo: send error message
+    CALL send_exception('DELETE query not allowed on Stock');
 END $$
 
 DROP TRIGGER IF EXISTS before_stock_insert $$
@@ -547,10 +521,7 @@ BEGIN
            FROM Manager
            WHERE idStaff = NEW.idManager
        ) = 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'A deleted manager cannot take an order';
+        CALL send_exception('A deleted manager cannot take an order');
     END IF;
 END $$
 
@@ -566,10 +537,7 @@ BEGIN
            FROM Manager
            WHERE idStaff = NEW.idManager
        ) = 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'A deleted manager cannot be assigned to an order';
+        CALL send_exception('A deleted manager cannot take an order');
     END IF;
 END $$
 
@@ -578,8 +546,7 @@ CREATE TRIGGER before_waiter_delete
 BEFORE DELETE ON Waiter
 FOR EACH ROW
 BEGIN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'DELETE query not allowed on `Waiter`';
+    CALL send_exception('DELETE query not allowed on waiter');
 END $$
 
 DELIMITER ;
