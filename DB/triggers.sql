@@ -42,7 +42,9 @@ CREATE TRIGGER after_product_supply_order_delete
     AFTER DELETE ON Product_SupplyOrder
     FOR EACH ROW
 BEGIN
-    -- todo: Sub stock
+    UPDATE Stock
+    SET quantity = quantity - OLD.quantity
+    WHERE idProduct = OLD.idProduct;
 END $$
 
 DROP TRIGGER IF EXISTS after_product_supply_order_insert $$
@@ -50,7 +52,9 @@ CREATE TRIGGER after_product_supply_order_insert
     AFTER INSERT ON Product_SupplyOrder
     FOR EACH ROW
 BEGIN
-    -- todo: Add stock
+    UPDATE Stock
+    SET quantity = quantity + NEW.quantity
+    WHERE idProduct = NEW.idProduct;
 END $$
 
 DROP TRIGGER IF EXISTS after_product_supply_order_update $$
@@ -58,7 +62,16 @@ CREATE TRIGGER after_product_supply_order_update
     AFTER UPDATE ON Product_SupplyOrder
     FOR EACH ROW
 BEGIN
-    -- todo: Adapt stock +/-
+    DECLARE new_quantity INT;
+    IF NEW.quantity < OLD.quantity THEN
+        SET new_quantity = -(OLD.quantity - NEW.quantity);
+    ELSE
+        SET new_quantity = NEW.quantity - OLD.quantity;
+    END IF;
+
+    UPDATE Stock
+    SET quantity = quantity + new_quantity
+    WHERE idProduct = NEW.idProduct;
 END $$
 
 DROP TRIGGER IF EXISTS after_supply_order_delete $$
@@ -377,7 +390,13 @@ CREATE TRIGGER before_happy_hour_insert
     BEFORE INSERT ON HappyHour
     FOR EACH ROW
 BEGIN
-    /* todo: check if manager is active */
+    IF (
+        SELECT active
+        FROM Manager
+        WHERE idStaff = NEW.idManager
+    ) = 0 THEN
+        CALL send_exception('An deleted Manager cannot create an happy hour');
+    END IF;
     /* y a-t-il vraiment besoin de faire un procédure pour un if New.duration <= 0 ? */
     CALL validate_happy_hour_duration(NEW.duration);
     CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
@@ -390,7 +409,13 @@ CREATE TRIGGER before_happy_hour_update
     BEFORE UPDATE ON HappyHour
     FOR EACH ROW
 BEGIN
-    /* todo: check if manager is active */
+    IF (
+           SELECT active
+           FROM Manager
+           WHERE idStaff = NEW.idManager
+       ) = 0 THEN
+        CALL send_exception('An deleted Manager cannot be assigned to an happy hour');
+    END IF;
     /* y a-t-il vraiment besoin de faire un procédure pour un if New.duration <= 0 ? */
     CALL validate_happy_hour_duration(NEW.duration);
     CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);

@@ -1,6 +1,6 @@
 # TODO
 /!\ Clean up trigger file (regroup triggers, etc... and put BIG TITLE COMMENTS) /!\
-* Create procedure for errors who takes a message as param
+* Create procedure for errors who takes a message as param (DONE)
 
 ## Triggers
 * Staff (DONE)
@@ -68,24 +68,24 @@
     * UPDATE : Food doesn't have a stock, quantity > 0
     * DELETE : Last ingredient can't be deleted (1..*)
 
-* HappyHour (TODO)
-    * INSERT : Manager is active, Start date greater than now, not overlapping w/ another HappyHour, Duration > 0, Reduction between 0 and 100 (TODO, manager is active)
-    * UPDATE : Same as INSERT (TODO, manager is active)
-    * DELETE : N/A (DONE)
+* HappyHour (DONE)
+    * INSERT : Manager is active, Start date greater than now, not overlapping w/ another HappyHour, Duration > 0, Reduction between 0 and 100
+    * UPDATE : Same as INSERT
+    * DELETE : N/A
 
 * Drink_HappyHour (DONE)
     * INSERT : Drink available during the whole happy hour!
     * UPDATE : Drink available during the whole happy hour!
     * DELETE : Last drink can't be deleted (1..*)
 
-* Product_SupplyOrder
-    * INSERT : Product needs to have a stock, quantity can't be 0, update product stock (TODO, update product stock)
-    * UPDATE : Product needs to have a stock, quantity can't be 0, update product stock (TODO, update product stock)
-    * DELETE : Last order item (product) can't be deleted (1..*), update product stock (TODO, update product stock)
+* Product_SupplyOrder (DONE)
+    * INSERT : Product needs to have a stock, quantity can't be 0, update product stock
+    * UPDATE : Product needs to have a stock, quantity can't be 0, update product stock
+    * DELETE : Last order item (product) can't be deleted (1..*), update product stock
 
 * Buyable_CustomerOrder
     * INSERT : Quantity can't be 0, update buyables stock (ingredients if need be) (DONE)
-    * UPDATE : Quantity can't be 0, update buyables stock (ingredients if need be) (TODO, update stock)
+    * UPDATE : Quantity can't be 0, update buyables stock (ingredients if need be) (TODO, verif new stock quantity, update stock)
     * DELETE : Last order item (product) can't be deleted (1..*), update buyables stock (ingredients if need be) (TODO, update stock)
 
 ## Heritage procedures
