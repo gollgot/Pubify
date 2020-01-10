@@ -75,20 +75,20 @@ class DrinkController extends Controller
         if (!$error) {
             // Fetch the pdo connection from the container dependency
             $pdo = $this->container->db;
-            // First, insert the new product
+
             try {
+                // Start our transaction
+                $pdo->beginTransaction();
+
+                // Query 1: Insert the new product
                 $query = $pdo->prepare("INSERT INTO Product(name, nameUnitMetric) VALUES(:name, :nameUnitMetric)");
                 $query->execute([
                     ':name' => $name,
                     ':nameUnitMetric' => $nameUnitMetric
                 ]);
                 $productId = $pdo->lastInsertId();
-            } catch (PDOException $exception) {
-                $error = true;
-            }
 
-            // Second, insert the buyable
-            try {
+                // Query2 : Insert the buyable
                 $query = $pdo->prepare("INSERT INTO Buyable(idProduct, price, startSaleDate, endSaleDate) VALUES(:idProduct, :price, :startSaleDate, :endSaleDate)");
                 $query->execute([
                     ':idProduct' => $productId,
@@ -96,24 +96,21 @@ class DrinkController extends Controller
                     ':startSaleDate' => $startSaleDate,
                     ':endSaleDate' => empty($endSaleDate) ? NULL : $endSaleDate
                 ]);
-            } catch (PDOException $exception) {
-                // If error at this level of inheritance, delete the current product from Product to preserve the DB integrity
-                $error = true;
-                $pdo->query("DELETE FROM Product WHERE id = " . $productId);
-            }
 
-            // Third, insert the drink
-            try {
+                // Query3 : Insert the drink
                 $query = $pdo->prepare("INSERT INTO Drink(idBuyable, alcoholLevel) VALUES(:idBuyable, :alcoholLevel)");
                 $query->execute([
                     ':idBuyable' => $productId,
                     ':alcoholLevel' => $alcoholLevel
                 ]);
+
+                // No exception has occured, so commit the changes.
+                $pdo->commit();
+
             } catch (PDOException $exception) {
-                // If error at this level of inheritance, delete the current product from Buyable and Product to preserve the DB integrity
+                //An exception has occured, which means that one of our database queries failed => Rollback
                 $error = true;
-                $pdo->query("DELETE FROM Buyable WHERE idProduct = " . $productId);
-                $pdo->query("DELETE FROM Product WHERE id = " . $productId);
+                $pdo->rollback();
             }
         }
 
