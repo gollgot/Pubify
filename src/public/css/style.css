@@ -1,6 +1,6 @@
 body {
     margin: 0px;
-    padding: 0px;
+    padding: 0px 0px 50px 0px;
 }
 
 #pubify-logo {
@@ -26,4 +26,18 @@ header a.login {
     padding: 20px;
     width: 280px;
     border: 1px solid #CED4DA;
+}
+
+span.available {
+    padding: 4px 10px 4px 10px;
+    border-radius: 10px;
+    background-color: #468847;
+    color: #FFF;
+}
+
+span.unavailable {
+    padding: 4px 10px 4px 10px;
+    border-radius: 10px;
+    background-color: #B94A48;
+    color: #FFF;
 }

@@ -5,16 +5,19 @@ INSERT INTO Staff (email, name, lastname, password)
 VALUES ('john.snow@pubify.com', 'John', 'Snow', '.Etml-1'),
        ('daenerys.targaryen@pubify.com', 'Daenerys', 'Targaryen', '.Etml-1'),
        ('obiwan.kenobi@pubify.com', 'Obi Wan', 'Kenobi', '.Etml-1'),
-       ('darth.vader@pubify.com', 'Darth', 'Vader', '.Etml-1');
+       ('darth.vader@pubify.com', 'Darth', 'Vader', '.Etml-1'),
+       ('manager@pubify.lo', 'John', 'Doe', '.Etml-1'),
+       ('waiter@pubify.lo', 'Jane', 'Doe', '.Etml-1');
 
 INSERT INTO Waiter (idStaff)
 VALUES (1),
+       (2),
        (3),
-       (4);
+       (4),
+       (6);
 
 INSERT INTO Manager (idStaff)
-VALUES (2),
-	   (1);
+VALUES (5);
 
 INSERT INTO Supplier (name)
 VALUES ('Aligro'),
