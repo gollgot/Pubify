@@ -87,15 +87,3 @@
     * INSERT : Quantity can't be 0, update buyables stock (ingredients if need be) (DONE)
     * UPDATE : Quantity can't be 0, update buyables stock (ingredients if need be) (TODO, verif new stock quantity, update stock)
     * DELETE : Last order item (product) can't be deleted (1..*), update buyables stock (ingredients if need be) (TODO, update stock)
-
-## Heritage procedures
-* create/update_waiter(..)
-* create/update_manager(..)
-* create/update_customer_order(..)
-* create/update_supply_order(..)
-* create/update_drink(..)
-* create/update_stockable_food(..)
-    * creates new empty stock
-* create/update_nonstockable_food(..)
-* create/update_ingredient(..)
-* create/update_buyable(..)
