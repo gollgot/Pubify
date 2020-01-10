@@ -129,10 +129,11 @@ FROM Drink
 DROP VIEW IF EXISTS vFood;
 CREATE VIEW vFood
 AS
-SELECT vBuyable.*
-FROM Food
-    INNER JOIN vBuyable
-        ON Food.idBuyable = vBuyable.id;
+SELECT *
+FROM vStockableFood
+UNION
+SELECT *
+FROM vNonstockableFood;
 
 DROP VIEW IF EXISTS vStockableFood;
 CREATE VIEW vStockableFood
@@ -145,11 +146,17 @@ FROM Food
 DROP VIEW IF EXISTS vNonstockableFood;
 CREATE VIEW vNonstockableFood
 AS
-SELECT vFood.*
-FROM vFood
-    LEFT JOIN Stock
-        ON vFood.id = Stock.idProduct
-WHERE Stock.id IS NULL;
+SELECT
+    vBuyable.*,
+    CAST(MIN(Stock.quantity / Food_Ingredient.quantity) AS UNSIGNED) AS quantity
+FROM Food
+    INNER JOIN Food_Ingredient
+        ON Food_Ingredient.idFood = Food.idBuyable
+    INNER JOIN Stock
+        ON Food_Ingredient.idIngredient = Stock.idProduct
+    INNER JOIN vBuyable
+        ON vBuyable.id = Food.idBuyable
+GROUP BY Food.idBuyable;
 
 DROP VIEW IF EXISTS vIngredient;
 CREATE VIEW vIngredient
@@ -158,3 +165,8 @@ SELECT vStockableProduct.*
 FROM vStockableProduct
     INNER JOIN Ingredient
         ON Ingredient.idProduct = vStockableProduct.id;
+
+# INSERT INTO Product_SupplyOrder(idProduct, idSupplyOrder, price, quantity)
+# VALUES (3, 4, 12, 8);
+# UPDATE Product_SupplyOrder SET quantity = 6 WHERE idProduct=3;
+# DELETE FROM Product_SupplyOrder WHERE idProduct = 3;
