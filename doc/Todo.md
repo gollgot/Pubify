@@ -87,3 +87,9 @@
     * INSERT : Quantity can't be 0, update buyables stock (ingredients if need be) (DONE)
     * UPDATE : Quantity can't be 0, update buyables stock (ingredients if need be) (TODO, verif new stock quantity, update stock)
     * DELETE : Last order item (product) can't be deleted (1..*), update buyables stock (ingredients if need be) (TODO, update stock)
+
+
+## APPLICATION
+* Voir (index) / ajouter (create / store) pour les commandes fournisseurs
+* Finir le store des happyhours
+* Pas oublié de mettre le stock a 0 coté app quand on créér un produits non composé / boissons
