@@ -139,7 +139,7 @@ CREATE VIEW vNonstockableFood
 AS
 SELECT
     vBuyable.*,
-    CAST(MIN(Stock.quantity / Food_Ingredient.quantity) AS UNSIGNED) AS quantity
+    CAST(FLOOR(MIN(Stock.quantity / Food_Ingredient.quantity)) AS UNSIGNED) AS quantity
 FROM Food
     INNER JOIN Food_Ingredient
         ON Food_Ingredient.idFood = Food.idBuyable
