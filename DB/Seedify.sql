@@ -101,9 +101,9 @@ VALUES (1, 7, 200),
 
 -- Happy Hour
 INSERT INTO HappyHour (startAt, duration, reductionPercent, idManager)
-VALUES ('2020-03-14 16:15', '01:00', 10, 2),
-       ('2020-03-15 21:25', '01:00', 10, 2),
-       ('2020-03-16 23:18', '01:00', 10, 2);
+VALUES ('2020-03-14 16:15', '01:00', 10, 5),
+       ('2020-03-15 21:25', '01:00', 10, 5),
+       ('2020-03-16 23:18', '01:00', 10, 5);
        
 INSERT INTO Drink_HappyHour (idDrink, startAtHappyHour)
 VALUES(3, '2020-03-14 16:15'),
@@ -129,8 +129,8 @@ VALUES (1, 4, 1.00, 16),
        (2, 6, 2.00, 4);
 
 INSERT INTO SupplyOrder (idOrder, idManager, idSupplier)
-VALUES (3, 2, 1),
-       (4, 2, 1);
+VALUES (3, 5, 1),
+       (4, 5, 1);
 
 INSERT INTO Product_SupplyOrder (idProduct, idSupplyOrder, price, quantity)
 VALUES (4, 3, 0.50, 20),
