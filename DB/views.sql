@@ -126,15 +126,6 @@ FROM Drink
     INNER JOIN vStockableBuyable
         ON Drink.idBuyable = vStockableBuyable.id;
 
-DROP VIEW IF EXISTS vFood;
-CREATE VIEW vFood
-AS
-SELECT *
-FROM vStockableFood
-UNION
-SELECT *
-FROM vNonstockableFood;
-
 DROP VIEW IF EXISTS vStockableFood;
 CREATE VIEW vStockableFood
 AS
@@ -142,7 +133,7 @@ SELECT vStockableBuyable.*
 FROM Food
     INNER JOIN vStockableBuyable
         ON Food.idBuyable = vStockableBuyable.id;
-
+        
 DROP VIEW IF EXISTS vNonstockableFood;
 CREATE VIEW vNonstockableFood
 AS
@@ -157,6 +148,15 @@ FROM Food
     INNER JOIN vBuyable
         ON vBuyable.id = Food.idBuyable
 GROUP BY Food.idBuyable;
+
+DROP VIEW IF EXISTS vFood;
+CREATE VIEW vFood
+AS
+SELECT *
+FROM vStockableFood
+UNION
+SELECT *
+FROM vNonstockableFood;
 
 DROP VIEW IF EXISTS vIngredient;
 CREATE VIEW vIngredient
