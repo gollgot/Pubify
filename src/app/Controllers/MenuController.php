@@ -18,7 +18,7 @@ class MenuController extends Controller
     public function showAction(Request $request, Response $response) {
         $pdo = $this->container->db;
 
-        $query = $pdo->query("SELECT product_name, price FROM vFood WHERE endSaleDate >= NOW() OR endSaleDate IS NULL");
+        $query = $pdo->query("SELECT product_name, price, quantity FROM vFood WHERE endSaleDate >= NOW() OR endSaleDate IS NULL");
         $foods = $query->fetchAll();
 
         $query = $pdo->query("SELECT product_name, price, alcoholLevel, quantity FROM vDrink WHERE alcoholLevel > 0.0 AND (endSaleDate >= NOW() OR endSaleDate IS NULL) ORDER BY quantity DESC");

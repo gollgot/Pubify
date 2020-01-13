@@ -41,3 +41,21 @@ span.unavailable {
     background-color: #B94A48;
     color: #FFF;
 }
+div.big-button-wrapper{
+    display: inline-block;
+    margin: 100px 50px 0px 50px;
+}
+div.big-button {
+    margin: 0px auto;
+    width: 150px;
+    height: 150px;
+    padding-top: 30px;
+    text-align: center;
+    background-color: #F4C44E;
+    border: 2px solid #8A7C66;
+    border-radius: 20px;
+}
+
+div.big-button img {
+    width: 80px;
+}

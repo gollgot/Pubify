@@ -5,21 +5,25 @@
 {% block body %}
 
 
-<h1 id="page-title">Accueil</h1>
-
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-12 text-center">
+        <div class="big-button-wrapper">
+            <h2>Menu</h2>
+            <a href="{{ path_for('menu') }}">
+                <div class="big-button">
+                    <img src="images/food.png" alt="">
+                </div>
+            </a>
+        </div>
 
-        <h2>Hello {{ nom }}</h2>
-
-        <p>
-            {%  if auth.check %}
-                Connecté, bienvenue {{ auth.user.email }}
-            {% else %}
-                Pas connecté
-            {% endif %}
-        </p>
-
+        <div class="big-button-wrapper">
+            <h2>Happy hour</h2>
+            <a href="#">
+                <div class="big-button">
+                    <img src="images/cocktails.png" alt="">
+                </div>
+            </a>
+        </div>
     </div>
 </div>
 

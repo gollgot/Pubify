@@ -25,7 +25,7 @@
                         <tr>
                             <th scope="row">{{ food.product_name }}</th>
                             <td>{{ food.price }} CHF</td>
-                            <td><span class="available">Oui</span></td>
+                            <td><span class="{{ food.quantity > 0 ? 'available' : 'unavailable' }}">{{ food.quantity > 0 ? 'oui' : 'non' }}</span></td>
                         </tr>
                     {% endfor %}
                 </tbody>
