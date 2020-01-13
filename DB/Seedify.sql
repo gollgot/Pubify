@@ -36,7 +36,7 @@ VALUES ('Classic Beef Burger', 'Gram'),
        ('Dr. Gabs', 'Bottle'),
        ('Farmer', 'Can'),
        ('Ginger Ale', 'Bottle'),
-       ('Cuvée des Trolls', 'Bottle'),
+       ('Cuvee des Trolls', 'Bottle'),
        ('Minced meat', 'Gram'),
        ('Buns', 'Gram'),
        ('Cheddar', 'Gram'),
@@ -101,12 +101,15 @@ VALUES (1, 7, 200),
 
 -- Happy Hour
 INSERT INTO HappyHour (startAt, duration, reductionPercent, idManager)
-VALUES ('2020-03-14 16:15', '01:00', 10, 5),
-       ('2020-03-15 21:25', '01:00', 10, 5),
+VALUES ('2020-01-01 18:00', '02:00', 20, 5),
+	   ('2020-03-14 16:15', '01:00', 50, 5),
+       ('2020-03-15 21:25', '01:00', 5, 5),
        ('2020-03-16 23:18', '01:00', 10, 5);
        
 INSERT INTO Drink_HappyHour (idDrink, startAtHappyHour)
-VALUES(3, '2020-03-14 16:15'),
+VALUES(4, '2020-01-01 18:00'),
+      (5, '2020-01-01 18:00'),
+      (3, '2020-03-14 16:15'),
 	  (4, '2020-03-14 16:15'),
 	  (5, '2020-03-14 16:15'),
       (5, '2020-03-15 21:25'),

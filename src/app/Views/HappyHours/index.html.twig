@@ -1,0 +1,42 @@
+{% extends 'Layout/main_layout.html.twig' %}
+
+{% block title %}Happy hours{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            <h1>Les prochaines Happy hours</h1>
+
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Date heure</th>
+                        <th scope="col">Durée (h:m:s)</th>
+                        <th scope="col">Réduction</th>
+                        <th scope="col">Boissons</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+
+                {% for happyhour in happyhours %}
+                    <tr>
+                        <th scope="row">{{ happyhour.startAtFormated }}</th>
+                        <td>{{ happyhour.duration }}</td>
+                        <td>{{ happyhour.reductionPercent }} %</td>
+                        <td>
+                            {% for linkedDrink in happyhour.linkedDrinks %}
+                                {{ linkedDrink.product_name }},
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+{% endblock %}
