@@ -12,6 +12,9 @@ $app->group('/admin', function () use ($container) {
     $this
         ->get('/happyhours/create', HappyHourController::class.":createAction")
         ->setName("admin_happyhours_create");
+    $this
+        ->post('/happyhours', HappyHourController::class.":storeAction")
+        ->setName("admin_happyhours_store");
 })
     ->add(new AuthMiddleware($container))
     ->add(new HasRoleMiddleware($container, "manager"));
