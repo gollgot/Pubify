@@ -105,7 +105,10 @@ class DrinkController extends Controller
                 ]);
 
                 // Query4 : Add the drink into the stock with 0 quantity (quantity will increase with suply order)
-                // todo insert into stock
+                $query = $pdo->prepare("INSERT INTO Stock(quantity, idProduct) VALUES(0, :idProduct)");
+                $query->execute([
+                   ':idProduct' => $productId
+                ]);
 
                 // No exception has occured, so commit the changes.
                 $pdo->commit();

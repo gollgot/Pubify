@@ -91,5 +91,11 @@
 
 ## APPLICATION
 * Voir (index) / ajouter (create / store) pour les commandes fournisseurs
-* Finir le store des happyhours
-* Pas oublié de mettre le stock a 0 coté app quand on créér un produits non composé / boissons
+* Finir le store des happyhours (in progress)
+* Pas oublié de mettre le stock a 0 coté app quand on créér un produits non composé
+
+### Améliorations
+* bouger $this->container->pdo dans le constructeur de la classe controller plutôt que de le taper a chaque methode de chaque controller
+
+### Bugs
+* N/A
