@@ -9,7 +9,60 @@ CREATE TRIGGER after_buyable_customer_order_delete
     AFTER DELETE ON Buyable_CustomerOrder
     FOR EACH ROW
 BEGIN
-    -- todo: Add stock
+    DECLARE finished INT DEFAULT 0;
+    DECLARE ingredient_id INT;
+    DECLARE used_quantity INT;
+
+    -- declare cursor for the buyables ingredients
+    DECLARE cur_ingredient
+        CURSOR FOR (
+            SELECT Food_Ingredient.idIngredient
+            FROM Food_Ingredient
+            WHERE Food_Ingredient.idFood = OLD.idBuyable
+        );
+
+    -- declare NOT FOUND handler
+    DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET finished = 1;
+
+    -- check if the affected product is stockable
+    -- or if it's composed of ingredients
+    IF (
+        SELECT id
+        FROM Stock
+        WHERE idProduct = OLD.idBuyable
+    ) IS NOT NULL THEN
+        -- it's sotckable so we directly update the stock
+        UPDATE Stock
+        SET Stock.quantity = (Stock.quantity + OLD.quantity)
+        WHERE idProduct = OLD.idBuyable;
+    ELSE
+        -- it's composed, so we need to update all of the ingredients
+        OPEN cur_ingredient;
+
+        -- loop through all the ingredients
+        updateIngredientStock: LOOP
+            FETCH cur_ingredient INTO ingredient_id;
+            IF finished = 1 THEN
+                LEAVE updateIngredientStock;
+            END IF;
+
+            -- get the quantity used of the current ingredient
+            SET used_quantity = (
+                SELECT quantity
+                FROM Food_Ingredient
+                WHERE idFood = OLD.idBuyable AND
+                        idIngredient = ingredient_id
+            );
+
+            -- update current ingredient stock
+            UPDATE Stock
+            SET Stock.quantity = (Stock.quantity + used_quantity * OLD.quantity)
+            WHERE idProduct = ingredient_id;
+        END LOOP;
+
+        CLOSE cur_ingredient;
+    END IF;
 END $$
 
 DROP TRIGGER IF EXISTS after_buyable_customer_order_insert $$
@@ -17,7 +70,60 @@ CREATE TRIGGER after_buyable_customer_order_insert
     AFTER INSERT ON Buyable_CustomerOrder
     FOR EACH ROW
 BEGIN
-    -- todo: Sub stock
+    DECLARE finished INT DEFAULT 0;
+    DECLARE ingredient_id INT;
+    DECLARE used_quantity INT;
+
+    -- declare cursor for the buyables ingredients
+    DECLARE cur_ingredient
+        CURSOR FOR (
+            SELECT Food_Ingredient.idIngredient
+            FROM Food_Ingredient
+            WHERE Food_Ingredient.idFood = NEW.idBuyable
+        );
+
+    -- declare NOT FOUND handler
+    DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET finished = 1;
+
+    -- check if the affected product is stockable
+    -- or if it's composed of ingredients
+    IF (
+        SELECT id
+        FROM Stock
+        WHERE idProduct = NEW.idBuyable
+    ) IS NOT NULL THEN
+        -- it's sotckable so we directly update the stock
+        UPDATE Stock
+        SET Stock.quantity = (Stock.quantity - NEW.quantity)
+        WHERE idProduct = NEW.idBuyable;
+    ELSE
+        -- it's composed, so we need to update all of the ingredients
+        OPEN cur_ingredient;
+
+        -- loop through all the ingredients
+        updateIngredientStock: LOOP
+            FETCH cur_ingredient INTO ingredient_id;
+            IF finished = 1 THEN
+                LEAVE updateIngredientStock;
+            END IF;
+
+            -- get the quantity used of the current ingredient
+            SET used_quantity = (
+                SELECT quantity
+                FROM Food_Ingredient
+                WHERE idFood = NEW.idBuyable AND
+                        idIngredient = ingredient_id
+            );
+
+            -- update current ingredient stock
+            UPDATE Stock
+            SET Stock.quantity = (Stock.quantity - used_quantity * NEW.quantity)
+            WHERE idProduct = ingredient_id;
+        END LOOP;
+
+        CLOSE cur_ingredient;
+    END IF;
 END $$
 
 DROP TRIGGER IF EXISTS after_buyable_customer_order_update $$
@@ -26,6 +132,61 @@ CREATE TRIGGER after_buyable_customer_order_update
     FOR EACH ROW
 BEGIN
     -- todo: Adapt stock +/-
+    DECLARE finished INT DEFAULT 0;
+    DECLARE ingredient_id INT;
+    DECLARE used_quantity INT;
+    DECLARE quantity_diff INT;
+
+    -- declare cursor for the buyables ingredients
+    DECLARE cur_ingredient
+        CURSOR FOR (
+            SELECT Food_Ingredient.idIngredient
+            FROM Food_Ingredient
+            WHERE Food_Ingredient.idFood = NEW.idBuyable
+        );
+
+    -- declare NOT FOUND handler
+    DECLARE CONTINUE HANDLER
+        FOR NOT FOUND SET finished = 1;
+
+    SET quantity_diff = OLD.quantity - NEW.quantity;
+    -- check if the affected product is stockable
+    -- or if it's composed of ingredients
+    IF (
+        SELECT id
+        FROM Stock
+        WHERE idProduct = NEW.idBuyable
+    ) IS NOT NULL THEN
+        -- it's sotckable so we directly update the stock
+        UPDATE Stock
+        SET Stock.quantity = (Stock.quantity + quantity_diff)
+        WHERE idProduct = NEW.idBuyable;
+    ELSE
+        -- it's composed, so we need to update all of the ingredients
+        OPEN cur_ingredient;
+
+        -- loop through all the ingredients
+        updateIngredientStock: LOOP
+            FETCH cur_ingredient INTO ingredient_id;
+            IF finished = 1 THEN
+                LEAVE updateIngredientStock;
+            END IF;
+
+            -- get the quantity used of the current ingredient
+            SET used_quantity = (
+                SELECT quantity
+                FROM Food_Ingredient
+                WHERE idFood = NEW.idBuyable AND
+                        idIngredient = ingredient_id
+            );
+            -- update current ingredient stock
+            UPDATE Stock
+            SET Stock.quantity = (Stock.quantity + used_quantity * quantity_diff)
+            WHERE idProduct = ingredient_id;
+        END LOOP;
+
+        CLOSE cur_ingredient;
+    END IF;
 END $$
 
 DROP TRIGGER IF EXISTS after_customer_order_delete $$
@@ -134,22 +295,6 @@ BEGIN
     DECLARE stock_id INT;
     DECLARE error BOOLEAN;
 
-    DECLARE finished INT DEFAULT 0;
-    DECLARE ingredient_id INT;
-    DECLARE used_quantity INT;
-
-    -- declare cursor for the buyables ingredients
-    DECLARE cur_ingredient
-        CURSOR FOR (
-            SELECT Food_Ingredient.idIngredient
-            FROM Food_Ingredient
-            WHERE Food_Ingredient.idFood = NEW.idBuyable
-        );
-
-    -- declare NOT FOUND handler
-    DECLARE CONTINUE HANDLER
-        FOR NOT FOUND SET finished = 1;
-
     CALL check_quantity_not_zero(NEW.quantity);
 
     SET stock_id = (
@@ -178,36 +323,6 @@ BEGIN
 
     IF error = true THEN
         CALL send_exception('Not enough stock for the order');
-    END IF;
-
-    -- TODO: déplacer dans le after insert
-    -- All good regarding the quantity, so we can deduct it from the stock
-    IF stock_id IS NOT NULL THEN
-        UPDATE Stock
-        SET Stock.quantity = (Stock.quantity - NEW.quantity)
-        WHERE idProduct = NEW.idBuyable;
-    ELSE
-        OPEN cur_ingredient;
-
-        updateIngredientStock: LOOP
-            FETCH cur_ingredient INTO ingredient_id;
-            IF finished = 1 THEN
-                LEAVE updateIngredientStock;
-            END IF;
-
-            SET used_quantity = (
-                SELECT quantity
-                FROM Food_Ingredient
-                WHERE idFood = NEW.idBuyable AND
-                        idIngredient = ingredient_id
-            );
-
-            UPDATE Stock
-            SET Stock.quantity = (Stock.quantity - used_quantity*NEW.quantity)
-            WHERE idProduct = ingredient_id;
-        END LOOP;
-
-        CLOSE cur_ingredient;
     END IF;
 END $$
 
