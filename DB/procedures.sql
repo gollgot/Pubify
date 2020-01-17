@@ -43,7 +43,7 @@ CREATE FUNCTION within_range_datetime(min DATETIME, max DATETIME, value DATETIME
 RETURNS BOOLEAN
 DETERMINISTIC
 BEGIN
-    RETURN IF(value BETWEEN min AND max, TRUE, FALSE);
+    RETURN IF(min <= value && (max IS NULL OR max >= value), TRUE, FALSE);
 END $$
 
 -- ------------------------------- --
@@ -143,8 +143,15 @@ END $$
 DROP PROCEDURE IF EXISTS check_drink_sale_date_within_happy_hour_duration $$
 CREATE PROCEDURE check_drink_sale_date_within_happy_hour_duration(startAtHappyHour DATETIME, idDrink INT)
 BEGIN
+    DECLARE start_drink_sale DATETIME;
     DECLARE end_drink_sale DATETIME;
     DECLARE happy_hour_duration TIME;
+
+    SET start_drink_sale = (
+        SELECT startSaleDate
+        FROM Buyable
+        WHERE idProduct = idDrink
+    );
 
     SET end_drink_sale = (
         SELECT endSaleDate
@@ -158,7 +165,8 @@ BEGIN
         WHERE startAt = startAtHappyHour
     );
 
-    if NOT within_range_datetime(startAtHappyHour, ADDTIME(startAtHappyHour, happy_hour_duration), end_drink_sale) THEN
+    if NOT (within_range_datetime(start_drink_sale, end_drink_sale, startAtHappyHour) AND
+           within_range_datetime(start_drink_sale, end_drink_sale, ADDTIME(startAtHappyHour, happy_hour_duration))) THEN
         -- return an `unhandeled used-defined exception`
         -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
         SIGNAL SQLSTATE '45000'

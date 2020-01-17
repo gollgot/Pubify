@@ -419,7 +419,7 @@ CREATE TRIGGER before_drink_happy_hour_update
     BEFORE UPDATE ON Drink_HappyHour
     FOR EACH ROW
 BEGIN
-    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink);
+    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink, OLD.startAtHappyHour);
 END $$
 
 DROP TRIGGER IF EXISTS before_food_delete $$

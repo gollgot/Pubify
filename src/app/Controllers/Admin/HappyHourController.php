@@ -98,6 +98,9 @@ class HappyHourController extends Controller
                         ":startAtHappyHour" => $start
                     ]);
                 }
+
+                // No exception has occured, so commit the changes.
+                $pdo->commit();
             } catch (PDOException $e) {
                 //An exception has occured, which means that one of our database queries failed => Rollback
                 $error = true;
