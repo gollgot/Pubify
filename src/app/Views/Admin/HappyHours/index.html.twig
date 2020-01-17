@@ -26,21 +26,20 @@
 
 
                 <tbody>
-
-                {% for happyhour in happyhours %}
-                    <tr>
-                        <th scope="row">{{ happyhour.startAtFormated }}</th>
-                        <td>{{ happyhour.duration }}</td>
-                        <td>{{ happyhour.reductionPercent }} %</td>
-                        <td>
-                            {% for linkedDrink in happyhour.linkedDrinks %}
-                                {{ linkedDrink.product_name }},
-                            {% endfor %}
-                        </td>
-                        <td>{{ happyhour.name }} {{ happyhour.lastname }}</td>
-                        <td><a class="btn btn-warning" href="#">Modifier</a></td>
-                    </tr>
-                {% endfor %}
+                    {% for happyhour in happyhours %}
+                        <tr>
+                            <th scope="row">{{ happyhour.startAtFormated }}</th>
+                            <td>{{ happyhour.duration }}</td>
+                            <td>{{ happyhour.reductionPercent }} %</td>
+                            <td>
+                                {% for linkedDrink in happyhour.linkedDrinks %}
+                                    {{ linkedDrink.product_name }},
+                                {% endfor %}
+                            </td>
+                            <td>{{ happyhour.name }} {{ happyhour.lastname }}</td>
+                            <td><a class="btn btn-warning" href="#">Modifier</a></td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
 

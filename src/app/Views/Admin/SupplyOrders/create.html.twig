@@ -1,0 +1,31 @@
+{% extends 'Layout/admin_layout.html.twig' %}
+
+{% block title %}Nouvelle commande fournisseur{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            {% include 'FlashMessages/error.html.twig' %}
+
+            <h1>Nouvelle commande fournisseur</h1>
+
+            <form id="drinks-create-form" action="#" method="post">
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <span class="text-danger">* Champs obligatoire</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <button class="btn btn-success">Create</button>
+
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}

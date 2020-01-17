@@ -19,32 +19,34 @@ VALUES (1),
 INSERT INTO Manager (idStaff)
 VALUES (5);
 
+-- Supplier
 INSERT INTO Supplier (name)
 VALUES ('Aligro'),
        ('Dr. Gabs');
 
 -- Product
 INSERT INTO UnitMetric (name, shortname)
-VALUES ('Gram', 'g'),
+VALUES ('Gramme', 'g'),
        ('Litre', 'l'),
-       ('Bottle', 'bt'),
-       ('Can', 'can');
+       ('Bouteille', 'bt'),
+       ('Canette', 'can');
 
 INSERT INTO Product (name, nameUnitMetric)
-VALUES ('Classic Beef Burger', 'Gram'),
-       ('Fish \'N\' Chips', 'Gram'),
-       ('Dr. Gabs', 'Bottle'),
-       ('Farmer', 'Can'),
-       ('Ginger Ale', 'Bottle'),
-       ('Cuvee des Trolls', 'Bottle'),
-       ('Minced meat', 'Gram'),
-       ('Buns', 'Gram'),
-       ('Cheddar', 'Gram'),
-       ('Letuce', 'Gram'),
-       ('Onion', 'Gram'),
-       ('Tomato', 'Gram'),
-       ('Cod fillet', 'Gram'),
-       ('Chips', 'Gram');
+VALUES ('Burger classic', 'Gramme'),
+       ('Fish \'N\' Chips', 'Gramme'),
+       ('Dr. Gabs', 'Bouteille'),
+       ('Farmer', 'Canette'),
+       ('Ginger Ale', 'Bouteille'),
+       ('Cuvee des Trolls', 'Bouteille'),
+       ('Boeuf hache', 'Gramme'),
+       ('Pains burger', 'Gramme'),
+       ('Cheddar', 'Gramme'),
+       ('Salade', 'Gramme'),
+       ('Oignon', 'Gramme'),
+       ('Tomate', 'Gramme'),
+       ('Filet de morue', 'Gramme'),
+       ('Frites', 'Gramme'),
+       ('Fuse tea', 'Bouteille');
 
 INSERT INTO Stock (quantity, idProduct)
 VALUES (22, 3),
@@ -52,13 +54,14 @@ VALUES (22, 3),
        (16, 5),
        (2, 6),
        (2000, 7),
-       (10, 8),
+       (50, 8),
        (200, 9),
        (2000, 10),
        (500, 11),
        (500, 12),
        (2000, 13),
-       (4000, 14);
+       (4000, 14),
+       (10, 15);
 
 INSERT INTO Buyable (idProduct, price, startSaleDate, endSaleDate)
 VALUES (1, 18.50, '2019-01-15', NULL),
@@ -66,7 +69,8 @@ VALUES (1, 18.50, '2019-01-15', NULL),
        (3, 4.00, '2019-01-15', NULL),
        (4, 1.00, '2019-01-15', NULL),
        (5, 2.00, '2019-01-15', NULL),
-       (6, 2.50, '2019-01-15', NULL);
+       (6, 2.50, '2019-01-15', NULL),
+       (15, 3.50, '2019-01-15', NULL);
 
 INSERT INTO Ingredient (idProduct)
 VALUES (7),
@@ -82,7 +86,8 @@ INSERT INTO Drink (idBuyable, alcoholLevel)
 VALUES (3, 5),
        (4, 5),
        (5, 0),
-       (6, 5);
+       (6, 5),
+       (15, 0);
 
 INSERT INTO Food
 VALUES (1),
@@ -90,7 +95,7 @@ VALUES (1),
 
 INSERT INTO Food_Ingredient (idFood, idIngredient, quantity)
 VALUES (1, 7, 200),
-       (1, 8, 2),
+       (1, 8, 100),
        (1, 9, 10),
        (1, 10, 15),
        (1, 11, 5),
