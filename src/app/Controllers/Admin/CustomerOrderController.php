@@ -39,9 +39,9 @@ class CustomerOrderController extends Controller
             $query->execute([
                 'idOrder' => $orders[$i]['id']
             ]);
-            
-            $totalPriceWithoutTVA = $query->fetch();
-            $orders[$i]['totalPrice'] = $totalPriceWithoutTVA + ($totalPriceWithoutTVA * $orders[$i]['tva'] / 100);
+
+            $totalPriceWithoutTVA = $query->fetch()['totalPrice'];
+            $orders[$i]['totalPrice'] = round($totalPriceWithoutTVA + ($totalPriceWithoutTVA * $orders[$i]['tva'] / 100), 2);
 
         }
 

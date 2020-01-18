@@ -18,8 +18,8 @@
                         <th scope="col">Date heure commande</th>
                         <th scope="col">Commandé par</th>
                         <th scope="col">Produit (qté commandée)</th>
-                        <th scope="col">TVA</th>
-                        <th scope="col">Prix total</th>
+                        <th scope="col">TVA %</th>
+                        <th scope="col">Prix total TTC (CHF)</th>
                     </tr>
                 </thead>
 
@@ -34,7 +34,7 @@
                                 {% endfor%}
                             </td>
                             <td>{{ order.tva }}</td>
-                            <td>{{ order.tva }}</td>
+                            <td>{{ order.totalPrice }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
