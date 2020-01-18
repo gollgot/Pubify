@@ -10,15 +10,12 @@
 
             <h1>Tous les ingrédients</h1>
 
-            <a class="btn btn-primary" href="#">Ajouter un ingrédient</a><br><br>
-
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
                         <th scope="col">Nom</th>
                         <th scope="col">Quantité en stock</th>
                         <th scope="col">Unité</th>
-                        <th scope="col">Action</th>
                     </tr>
                 </thead>
 
@@ -29,7 +26,6 @@
                         <th scope="row">{{ ingredient.product_name }}</th>
                         <td>{{ ingredient.quantity }}</td>
                         <td>{{ ingredient.unit_name }}</td>
-                        <td><a class="btn btn-warning" href="#">Modifier</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
