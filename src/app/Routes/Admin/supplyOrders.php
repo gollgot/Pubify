@@ -12,6 +12,9 @@ $app->group('/admin', function () use ($container) {
     $this
         ->get('/supply-orders/create', SupplyOrderController::class.":createAction")
         ->setName("admin_supply-orders_create");
+    $this
+        ->post('/supply-orders', SupplyOrderController::class.":storeAction")
+        ->setName("admin_supply-orders_store");
 })
     ->add(new AuthMiddleware($container))
     ->add(new HasRoleMiddleware($container, "manager"));
