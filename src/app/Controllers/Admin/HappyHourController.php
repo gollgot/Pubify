@@ -22,7 +22,7 @@ class HappyHourController extends Controller
         $pdo = $this->container->db;
 
         // Fetch all happyhours
-        $query = $pdo->query("SELECT name, lastname, duration, reductionPercent, startAt, DATE_FORMAT(startAt, '%d.%m.%Y %H:%i') as startAtFormated FROM HappyHour INNER JOIN Manager ON idManager = idStaff INNER JOIN Staff ON idStaff = id ORDER BY startAt");
+        $query = $pdo->query("SELECT name, lastname, duration, reductionPercent, startAt, DATE_FORMAT(startAt, '%d.%m.%Y %H:%i') as startAtFormated FROM HappyHour INNER JOIN Manager ON idManager = idStaff INNER JOIN Staff ON idStaff = id ORDER BY startAt DESC");
         $happyhours = $query->fetchAll();
 
         // For each happy hour, fetch his linked drinks and add them to the happyHour array to pass them to the view
