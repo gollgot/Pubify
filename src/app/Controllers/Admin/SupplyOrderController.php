@@ -41,7 +41,15 @@ class SupplyOrderController extends Controller
         // Fetch the pdo connection from the container dependency
         $pdo = $this->container->db;
 
+        $query = $pdo->query("SELECT * FROM Supplier");
+        $suppliers = $query->fetchAll();
+
+        $query = $pdo->query("SELECT product_name, unit_name FROM vStockableProduct");
+        $products = $query->fetchAll();
+
         return $this->render($response, 'Admin/SupplyOrders/create.html.twig', [
+            'suppliers' => $suppliers,
+            'products' => $products
         ]);
     }
 
