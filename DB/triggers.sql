@@ -340,14 +340,7 @@ CREATE TRIGGER before_customer_order_insert
     FOR EACH ROW
 BEGIN
     CALL check_customer_order_not_supply_order(NEW.idOrder);
-
-    IF (
-           SELECT active
-           FROM Waiter
-           WHERE idStaff = NEW.idWaiter
-       ) = 0 THEN
-        CALL send_exception('A deleted waiter cannot take an order');
-    END IF;
+    CALL check_staff_is_active(NEW.idWaiter);
 END $$
 
 DROP TRIGGER IF EXISTS before_customer_order_update $$
@@ -356,14 +349,7 @@ CREATE TRIGGER before_customer_order_update
     FOR EACH ROW
 BEGIN
     CALL check_customer_order_not_supply_order(NEW.idOrder);
-
-    IF (
-           SELECT active
-           FROM Waiter
-           WHERE idStaff = NEW.idWaiter
-       ) = 0 THEN
-        CALL send_exception('A deleted waiter cannot take an order');
-    END IF;
+    CALL check_staff_is_active(NEW.idWaiter);
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_delete $$
@@ -505,17 +491,9 @@ CREATE TRIGGER before_happy_hour_insert
     BEFORE INSERT ON HappyHour
     FOR EACH ROW
 BEGIN
-    IF (
-        SELECT active
-        FROM Manager
-        WHERE idStaff = NEW.idManager
-    ) = 0 THEN
-        CALL send_exception('An deleted Manager cannot create an happy hour');
-    END IF;
-    /* y a-t-il vraiment besoin de faire un procédure pour un if New.duration <= 0 ? */
+    CALL check_staff_is_active(new.idManager);
     CALL validate_happy_hour_duration(NEW.duration);
     CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
-    /* y a-t-il vraiment besoin de faire un procédure pour un if New.reductionPercent <= 0 ? */
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
@@ -524,17 +502,9 @@ CREATE TRIGGER before_happy_hour_update
     BEFORE UPDATE ON HappyHour
     FOR EACH ROW
 BEGIN
-    IF (
-           SELECT active
-           FROM Manager
-           WHERE idStaff = NEW.idManager
-       ) = 0 THEN
-        CALL send_exception('An deleted Manager cannot be assigned to an happy hour');
-    END IF;
-    /* y a-t-il vraiment besoin de faire un procédure pour un if New.duration <= 0 ? */
+    CALL check_staff_is_active(NEW.idManager);
     CALL validate_happy_hour_duration(NEW.duration);
     CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
-    /* y a-t-il vraiment besoin de faire un procédure pour un if New.reductionPercent <= 0 ? */
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 

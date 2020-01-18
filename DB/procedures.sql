@@ -54,11 +54,11 @@ END $$
 DROP PROCEDURE IF EXISTS validate_alcohol_level $$
 CREATE PROCEDURE validate_alcohol_level(alcohol_level DECIMAL)
 BEGIN
-    IF NOT within_range_decimal(0, 100, alcohol_level) THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Alcohol level can\'t be negative!';
+    DECLARE max_alcohol_level INT DEFAULT 100;
+    DECLARE min_alcohol_level INT DEFAULT 0;
+
+    IF NOT within_range_decimal(min_alcohol_level, max_alcohol_level, alcohol_level) THEN
+        CALL send_exception('Alcohol level can\'t be negative!');
     END IF;
 END $$
 
@@ -66,27 +66,19 @@ END $$
 DROP PROCEDURE IF EXISTS validate_happy_hour_reduction $$
 CREATE PROCEDURE validate_happy_hour_reduction(reduction INT)
 BEGIN
-    DECLARE max_reduction_percent INT;
-    DECLARE min_reduction_percent INT;
-    SET max_reduction_percent = 100;
-    SET min_reduction_percent = 0;
+    DECLARE max_reduction_percent INT DEFAULT 100;
+    DECLARE min_reduction_percent INT DEFAULT 0;
 
-    IF NOT within_range_int(0, 100, reduction) THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'The reduction percent must be within 0 and 100';
+    IF NOT within_range_int(min_reduction_percent, max_reduction_percent, reduction) THEN
+        CALL send_exception('The reduction percent must be within 0 and 100');
     END IF;
 END $$
 
 DROP PROCEDURE IF EXISTS validate_happy_hour_duration $$
 CREATE PROCEDURE validate_happy_hour_duration(duration TIME)
 BEGIN
-    IF is_negative_time(duration) THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'The duration of a Happy Hour can\'t be negative!';
+    IF duration < 0 THEN
+        CALL send_exception('The duration of a Happy Hour can\'t be negative!');
     END IF;
 END $$
 
@@ -100,10 +92,7 @@ BEGIN
               startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration));
 
     IF nb_overlapping > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Happy hours can\'t be overlapping';
+        CALL send_exception('Happy hours can\'t be overlapping');
     END IF;
 END $$
 
@@ -111,10 +100,7 @@ DROP PROCEDURE IF EXISTS check_product_not_composed $$
 CREATE PROCEDURE check_product_not_composed(idProduct INT)
 BEGIN
     IF (SELECT COUNT(*) FROM Food_Ingredient WHERE idFood = idProduct) > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Composed products can\'t be stocked!';
+        CALL send_exception('Composed products can\'t be stocked!');
     END IF;
 END $$
 
@@ -122,10 +108,7 @@ DROP PROCEDURE IF EXISTS check_quantity_not_zero $$
 CREATE PROCEDURE check_quantity_not_zero(quantity INT)
 BEGIN
     IF quantity <= 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'The quantity can\'t be 0 or lower';
+        CALL send_exception('The quantity can\'t be 0 or lower');
     END IF;
 END $$
 
@@ -133,10 +116,7 @@ DROP PROCEDURE IF EXISTS check_start_sale_before_end_sale $$
 CREATE PROCEDURE check_start_sale_before_end_sale(`start` DATETIME, `end` DATETIME)
 BEGIN
     IF `start` > `end` THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Starting sale date can\'t be greater than the ending date';
+        CALL send_exception('Starting sale date can\'t be greater than the ending date');
     END IF;
 END $$
 
@@ -167,10 +147,7 @@ BEGIN
 
     if NOT (within_range_datetime(start_drink_sale, end_drink_sale, startAtHappyHour) AND
            within_range_datetime(start_drink_sale, end_drink_sale, ADDTIME(startAtHappyHour, happy_hour_duration))) THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Chosen drink can\'t be sold during the whole happy hour';
+        CALL send_exception('Chosen drink can\'t be sold during the whole happy hour');
     END IF;
 
 END $$
@@ -182,10 +159,7 @@ BEGIN
         FROM Ingredient
         WHERE Ingredient.idProduct = idBuyable
     ) > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'An Ingredient can\'t be a Buyable';
+        CALL send_exception('An Ingredient can\'t be a Buyable');
     END IF;
 END $$
 
@@ -196,10 +170,7 @@ BEGIN
         FROM Buyable
         WHERE Buyable.idProduct = idIngredient
     ) > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'A Buyable can\'t be an Ingredient';
+        CALL send_exception('A Buyable can\'t be an Ingredient');
     END IF;
 END $$
 
@@ -210,10 +181,7 @@ BEGIN
         FROM Food
         WHERE Food.idBuyable = idDrink
     ) > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'A Food can\'t be a Drink';
+        CALL send_exception('A Food can\'t be a Drink');
     END IF;
 END $$
 
@@ -224,10 +192,7 @@ BEGIN
         FROM Drink
         WHERE Drink.idBuyable = idFood
     ) > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'A Drink can\'t be a Food';
+        CALL send_exception('A Drink can\'t be a Food');
     END IF;
 END $$
 
@@ -238,10 +203,7 @@ BEGIN
         FROM SupplyOrder
         WHERE SupplyOrder.idOrder = idCustomerOrder
     ) > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'A CustomerOrder can\'t be a SupplyOrder';
+        CALL send_exception('A CustomerOrder can\'t be a SupplyOrder');
     END IF;
 END $$
 
@@ -252,10 +214,7 @@ BEGIN
         FROM CustomerOrder
         WHERE CustomerOrder.idOrder = idSupplyOrder
     ) > 0 THEN
-        -- return an `unhandeled used-defined exception`
-        -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'A SupplyOrder can\'t be a CustomerOrder';
+        CALL send_exception('A SupplyOrder can\'t be a CustomerOrder');
     END IF;
 END $$
 
@@ -272,6 +231,14 @@ BEGIN
     -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = errorDescription;
+END $$
+
+DROP PROCEDURE IF EXISTS check_staff_is_active $$
+CREATE PROCEDURE check_staff_is_active(idStaff INT)
+BEGIN
+    IF (SELECT * FROM vActiveStaff WHERE id = idStaff) IS NULL THEN
+        CALL send_exception('A deleted staff can\'t perform any action');
+    END IF;
 END $$
 
 DELIMITER ;
