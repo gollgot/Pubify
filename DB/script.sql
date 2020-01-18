@@ -1475,13 +1475,17 @@ DELIMITER ;
 -- STAFF
 INSERT INTO Staff (email, name, lastname, password)
 VALUES ('manager@pubify.lo', 'Daenerys', 'Targaryen', '1234'),
-       ('waiter@pubify.lo', 'John', 'Snow', '1234');
+       ('waiter@pubify.lo', 'John', 'Snow', '1234'),
+       ('manger.disabled@pubify.lo', 'Thomas', 'Shelby', '1234'),
+       ('waiter.disabled@pubify.lo', 'John', 'Doe', '1234');
 
-INSERT INTO Waiter (idStaff)
-VALUES (2);
+INSERT INTO Waiter (idStaff, active)
+VALUES (2, 1),
+       (4, 0);
 
-INSERT INTO Manager (idStaff)
-VALUES (1);
+INSERT INTO Manager (idStaff, active)
+VALUES (1, 1),
+       (3, 0);
 
 -- SUPPLIER
 INSERT INTO Supplier (name)
