@@ -1453,7 +1453,8 @@ VALUES (3, 5),
 
 INSERT INTO Food
 VALUES (1),
-       (2);
+       (2),
+       (18);
 
 INSERT INTO Food_Ingredient (idFood, idIngredient, quantity)
 VALUES (1, 7, 200),
