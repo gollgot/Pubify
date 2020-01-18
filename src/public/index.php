@@ -25,6 +25,7 @@ require '../app/Routes/Admin/drinks.php';
 require '../app/Routes/Admin/happyhours.php';
 require '../app/Routes/Admin/ingredients.php';
 require '../app/Routes/Admin/supplyOrders.php';
+require '../app/Routes/Admin/customerOrders.php';
 
 
 $app->run();
