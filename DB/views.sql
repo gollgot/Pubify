@@ -165,8 +165,3 @@ SELECT vStockableProduct.*
 FROM vStockableProduct
     INNER JOIN Ingredient
         ON Ingredient.idProduct = vStockableProduct.id;
-
-# INSERT INTO Product_SupplyOrder(idProduct, idSupplyOrder, price, quantity)
-# VALUES (3, 4, 12, 8);
-# UPDATE Product_SupplyOrder SET quantity = 6 WHERE idProduct=3;
-# DELETE FROM Product_SupplyOrder WHERE idProduct = 3;

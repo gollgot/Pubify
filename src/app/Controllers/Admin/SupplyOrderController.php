@@ -22,8 +22,18 @@ class SupplyOrderController extends Controller
         $pdo = $this->container->db;
 
         // Fetch all supply orders
-        $query = $pdo->query("SELECT orderAt, manager_name, manager_lastname, supplier_name, tva, DATE_FORMAT(orderAt, '%d.%m.%Y %H:%i') as orderAtFormated FROM vSupplyOrder ORDER BY orderAt DESC");
+        $query = $pdo->query("SELECT id, orderAt, manager_name, manager_lastname, supplier_name, tva, DATE_FORMAT(orderAt, '%d.%m.%Y %H:%i') as orderAtFormated FROM vSupplyOrder ORDER BY orderAt DESC");
         $orders = $query->fetchAll();
+
+        // For each supply order, fetch his linked products and add them to the orders array to pass them to the view
+        for($i = 0; $i < count($orders); ++$i){
+            $query = $pdo->prepare('SELECT product_name, Product_SupplyOrder.quantity FROM Product_SupplyOrder INNER JOIN vStockableProduct ON vStockableProduct.id = idProduct WHERE idSupplyOrder = :idOrder');
+            $query->execute([
+                'idOrder' => $orders[$i]['id']
+            ]);
+            $linkedProducts = $query->fetchAll();
+            $orders[$i]['linkedProducts'] = $linkedProducts;
+        }
 
         return $this->render($response, 'Admin/SupplyOrders/index.html.twig', [
             'orders' => $orders
