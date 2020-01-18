@@ -1471,7 +1471,6 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- PUBify Seeds
 -- -----------------------------------------------------
-USE PUBify;
 
 -- STAFF
 INSERT INTO Staff (email, name, lastname, password)
@@ -1493,7 +1492,8 @@ INSERT INTO UnitMetric (name, shortname)
 VALUES ('Gramme', 'g'),
        ('Litre', 'l'),
        ('Bouteille', 'bt'),
-       ('Canette', 'can');
+       ('Canette', 'can'),
+       ('Piece', 'pc');
 
 INSERT INTO Product (name, nameUnitMetric)
 VALUES ('Burger classic', 'Gramme'),
@@ -1512,7 +1512,8 @@ VALUES ('Burger classic', 'Gramme'),
        ('Frites', 'Gramme'),
        ('Fuse tea', 'Bouteille'),
        ('Biere de noel', 'Bouteille'),
-       ('Guiness', 'Bouteille');
+       ('Guiness', 'Bouteille'),
+       ('Rosti', 'Piece');
 
 INSERT INTO Stock (idProduct, quantity)
 VALUES (3, 50),
@@ -1529,7 +1530,8 @@ VALUES (3, 50),
        (14, 5625),
        (15, 20),
        (16, 15),
-       (17, 40);
+       (17, 40),
+       (18, 10);
 
 INSERT INTO Buyable (idProduct, price, startSaleDate, endSaleDate)
 VALUES (1, 18.50, '2019-01-15 10:00', NULL),
@@ -1540,7 +1542,8 @@ VALUES (1, 18.50, '2019-01-15 10:00', NULL),
        (6, 2.50, '2019-07-01 15:00', NULL),
        (15, 3.50, '2020-01-27 22:00', NULL),
        (16, 4.00, '2019-01-12', '2019-12-30'),
-       (17, 3.00, '2019-03-17', NULL);
+       (17, 3.00, '2019-03-17', NULL),
+       (18, 5.00, '2020-01-18 14:23', NULL);
 
 INSERT INTO Ingredient (idProduct)
 VALUES (7),
