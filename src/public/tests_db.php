@@ -219,7 +219,7 @@ $requests = [
     ],
     [
         "query" => "UPDATE Manager SET active = 0 WHERE idStaff = 1",
-        "result" => "Error: Cannot delete the last waiter"
+        "result" => "Error: Cannot delete the last manager"
     ],
     [
         "query" => "UPDATE Stock SET quantity = -2 WHERE idProduct = 3",
