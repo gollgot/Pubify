@@ -566,6 +566,15 @@ BEGIN
     RETURN IF(min <= value && (max IS NULL OR max >= value), TRUE, FALSE);
 END $$
 
+DROP PROCEDURE IF EXISTS send_exception $$
+CREATE PROCEDURE send_exception(errorDescription VARCHAR(255))
+BEGIN
+    -- return an `unhandeled used-defined exception`
+    -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = errorDescription;
+END $$
+
 -- ------------------------------- --
 -- SPECIFIC PROCEDURES n FUNCTIONS --
 -- ------------------------------- --
@@ -622,7 +631,7 @@ END $$
 DROP PROCEDURE IF EXISTS check_product_not_composed $$
 CREATE PROCEDURE check_product_not_composed(idProduct INT)
 BEGIN
-    # Check that the product has ingredients
+    -- Check that the product has ingredients
     IF (SELECT COUNT(*) FROM Food_Ingredient WHERE idFood = idProduct) > 0 THEN
         CALL send_exception('Composed products can\'t be stocked!');
     END IF;
@@ -749,21 +758,6 @@ BEGIN
     END IF;
 END $$
 
-DROP PROCEDURE IF EXISTS create_new_empty_stock $$
-CREATE PROCEDURE create_new_empty_stock(idProduct INT)
-BEGIN
-    INSERT INTO Stock (quantity, idProduct) VALUES (0, idProduct);
-END $$
-
-DROP PROCEDURE IF EXISTS send_exception $$
-CREATE PROCEDURE send_exception(errorDescription VARCHAR(255))
-BEGIN
-    -- return an `unhandeled used-defined exception`
-    -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = errorDescription;
-END $$
-
 DROP PROCEDURE IF EXISTS check_staff_is_active $$
 CREATE PROCEDURE check_staff_is_active(idStaff INT)
 BEGIN
@@ -772,8 +766,19 @@ BEGIN
     END IF;
 END $$
 
+DROP PROCEDURE IF EXISTS check_not_composed_food $$
+CREATE PROCEDURE check_not_composed_food(idFood INT)
+BEGIN
+    IF (
+        SELECT quantity
+        FROM Stock
+        WHERE idProduct = idFood
+    ) > 0 THEN
+        CALL send_exception('A stockable Food can\'t have Ingredients');
+    END IF;
+END $$
+
 DELIMITER ;
-USE PUBify;
 
 DELIMITER $$
 -- -----------------------------------------------
@@ -807,12 +812,12 @@ BEGIN
         FROM Stock
         WHERE idProduct = OLD.idBuyable
     ) IS NOT NULL THEN
-        -- it's sotckable so we directly update the stock
+        -- it's a stockable then the stock can be directly updated
         UPDATE Stock
         SET Stock.quantity = (Stock.quantity + OLD.quantity)
         WHERE idProduct = OLD.idBuyable;
     ELSE
-        -- it's composed, so we need to update all of the ingredients
+        -- it's composed, so we need to update all of it's ingredients
         OPEN cur_ingredient;
 
         -- loop through all the ingredients
@@ -868,12 +873,12 @@ BEGIN
         FROM Stock
         WHERE idProduct = NEW.idBuyable
     ) IS NOT NULL THEN
-        -- it's sotckable so we directly update the stock
+        -- it's a stockable then the stock can be directly updated
         UPDATE Stock
         SET Stock.quantity = (Stock.quantity - NEW.quantity)
         WHERE idProduct = NEW.idBuyable;
     ELSE
-        -- it's composed, so we need to update all of the ingredients
+        -- it's composed, so we need to update all of it's ingredients
         OPEN cur_ingredient;
 
         -- loop through all the ingredients
@@ -978,7 +983,7 @@ BEGIN
            FROM Buyable_CustomerOrder
            WHERE idCustomerOrder = OLD.idCustomerOrder
        ) = 1 THEN
-        CALL send_exception('There needs to be at least one product by customer order!');
+        CALL send_exception('There needs to be at least one product per customer order!');
     END IF;
 END $$
 
@@ -1008,7 +1013,9 @@ BEGIN
     );
     SET error = false;
 
+    -- Check if there is enough stock for the wanted Buyable
     IF stock_id IS NULL THEN
+        -- The product is composed of ingredients, so we need to check each ingredient
         IF (
             SELECT COUNT(*)
             FROM Food_Ingredient
@@ -1092,7 +1099,7 @@ BEGIN
            FROM Drink_HappyHour
            WHERE startAtHappyHour = OLD.startAtHappyHour
        ) = 1 THEN
-        CALL send_exception('There needs to be at least one drink by happy hour!');
+        CALL send_exception('There needs to be at least one drink per happy hour!');
     END IF;
 END $$
 
@@ -1146,7 +1153,7 @@ BEGIN
            FROM Food_Ingredient
            WHERE idFood = OLD.idFood
        ) = 1 THEN
-        CALL send_exception('There needs to be at least one Ingredient by composed food!');
+        CALL send_exception('There needs to be at least one Ingredient per composed food!');
     END IF;
 END $$
 
@@ -1155,19 +1162,9 @@ CREATE TRIGGER before_food_ingredient_insert
     BEFORE INSERT ON Food_Ingredient
     FOR EACH ROW
 BEGIN
-    DECLARE food_stock_quantity INT;
-
     CALL check_quantity_not_zero(NEW.quantity);
 
-    SET food_stock_quantity = (
-        SELECT quantity
-        FROM Stock
-        WHERE idProduct = NEW.idFood
-    );
-
-    IF food_stock_quantity > 0 THEN
-        CALL send_exception('A stockable Food can\'t have Ingredients');
-    END IF;
+    CALL check_not_composed_food(NEW.idFood);
 END $$
 
 DROP TRIGGER IF EXISTS before_food_ingredient_update $$
@@ -1175,19 +1172,8 @@ CREATE TRIGGER before_food_ingredient_update
     BEFORE UPDATE ON Food_Ingredient
     FOR EACH ROW
 BEGIN
-    DECLARE food_stock_quantity INT;
-
     CALL check_quantity_not_zero(NEW.quantity);
-
-    SET food_stock_quantity = (
-        SELECT quantity
-        FROM Stock
-        WHERE idProduct = NEW.idFood
-    );
-
-    IF food_stock_quantity > 0 THEN
-        CALL send_exception('A stockable Food can\'t have Ingredients');
-    END IF;
+    CALL check_not_composed_food(NEW.idFood);
 END $$
 
 DROP TRIGGER IF EXISTS before_happy_hour_insert $$
@@ -1281,7 +1267,7 @@ BEGIN
         FROM Product_SupplyOrder
         WHERE idSupplyOrder = OLD.idSupplyOrder
     ) = 1 THEN
-        CALL send_exception('There needs to be at least one product by supply order!');
+        CALL send_exception('There needs to be at least one product per supply order!');
     END IF;
 END $$
 

@@ -30,6 +30,15 @@ BEGIN
     RETURN IF(min <= value && (max IS NULL OR max >= value), TRUE, FALSE);
 END $$
 
+DROP PROCEDURE IF EXISTS send_exception $$
+CREATE PROCEDURE send_exception(errorDescription VARCHAR(255))
+BEGIN
+    -- return an `unhandeled used-defined exception`
+    -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = errorDescription;
+END $$
+
 -- ------------------------------- --
 -- SPECIFIC PROCEDURES n FUNCTIONS --
 -- ------------------------------- --
@@ -86,7 +95,7 @@ END $$
 DROP PROCEDURE IF EXISTS check_product_not_composed $$
 CREATE PROCEDURE check_product_not_composed(idProduct INT)
 BEGIN
-    # Check that the product has ingredients
+    -- Check that the product has ingredients
     IF (SELECT COUNT(*) FROM Food_Ingredient WHERE idFood = idProduct) > 0 THEN
         CALL send_exception('Composed products can\'t be stocked!');
     END IF;
@@ -213,21 +222,6 @@ BEGIN
     END IF;
 END $$
 
-DROP PROCEDURE IF EXISTS create_new_empty_stock $$
-CREATE PROCEDURE create_new_empty_stock(idProduct INT)
-BEGIN
-    INSERT INTO Stock (quantity, idProduct) VALUES (0, idProduct);
-END $$
-
-DROP PROCEDURE IF EXISTS send_exception $$
-CREATE PROCEDURE send_exception(errorDescription VARCHAR(255))
-BEGIN
-    -- return an `unhandeled used-defined exception`
-    -- see : https://dev.mysql.com/doc/refman/5.5/en/signal.html
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = errorDescription;
-END $$
-
 DROP PROCEDURE IF EXISTS check_staff_is_active $$
 CREATE PROCEDURE check_staff_is_active(idStaff INT)
 BEGIN
@@ -236,4 +230,17 @@ BEGIN
     END IF;
 END $$
 
+DROP PROCEDURE IF EXISTS check_not_composed_food $$
+CREATE PROCEDURE check_not_composed_food(idFood INT)
+BEGIN
+    IF (
+        SELECT quantity
+        FROM Stock
+        WHERE idProduct = idFood
+    ) > 0 THEN
+        CALL send_exception('A stockable Food can\'t have Ingredients');
+    END IF;
+END $$
+
 DELIMITER ;
+

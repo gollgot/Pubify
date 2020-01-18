@@ -1,5 +1,3 @@
-USE PUBify;
-
 DELIMITER $$
 -- -----------------------------------------------
 -- AFTER Triggers
@@ -32,12 +30,12 @@ BEGIN
         FROM Stock
         WHERE idProduct = OLD.idBuyable
     ) IS NOT NULL THEN
-        -- it's sotckable so we directly update the stock
+        -- it's a stockable then the stock can be directly updated
         UPDATE Stock
         SET Stock.quantity = (Stock.quantity + OLD.quantity)
         WHERE idProduct = OLD.idBuyable;
     ELSE
-        -- it's composed, so we need to update all of the ingredients
+        -- it's composed, so we need to update all of it's ingredients
         OPEN cur_ingredient;
 
         -- loop through all the ingredients
@@ -93,12 +91,12 @@ BEGIN
         FROM Stock
         WHERE idProduct = NEW.idBuyable
     ) IS NOT NULL THEN
-        -- it's sotckable so we directly update the stock
+        -- it's a stockable then the stock can be directly updated
         UPDATE Stock
         SET Stock.quantity = (Stock.quantity - NEW.quantity)
         WHERE idProduct = NEW.idBuyable;
     ELSE
-        -- it's composed, so we need to update all of the ingredients
+        -- it's composed, so we need to update all of it's ingredients
         OPEN cur_ingredient;
 
         -- loop through all the ingredients
@@ -203,7 +201,7 @@ BEGIN
            FROM Buyable_CustomerOrder
            WHERE idCustomerOrder = OLD.idCustomerOrder
        ) = 1 THEN
-        CALL send_exception('There needs to be at least one product by customer order!');
+        CALL send_exception('There needs to be at least one product per customer order!');
     END IF;
 END $$
 
@@ -233,7 +231,9 @@ BEGIN
     );
     SET error = false;
 
+    -- Check if there is enough stock for the wanted Buyable
     IF stock_id IS NULL THEN
+        -- The product is composed of ingredients, so we need to check each ingredient
         IF (
             SELECT COUNT(*)
             FROM Food_Ingredient
@@ -317,7 +317,7 @@ BEGIN
            FROM Drink_HappyHour
            WHERE startAtHappyHour = OLD.startAtHappyHour
        ) = 1 THEN
-        CALL send_exception('There needs to be at least one drink by happy hour!');
+        CALL send_exception('There needs to be at least one drink per happy hour!');
     END IF;
 END $$
 
@@ -371,7 +371,7 @@ BEGIN
            FROM Food_Ingredient
            WHERE idFood = OLD.idFood
        ) = 1 THEN
-        CALL send_exception('There needs to be at least one Ingredient by composed food!');
+        CALL send_exception('There needs to be at least one Ingredient per composed food!');
     END IF;
 END $$
 
@@ -380,19 +380,9 @@ CREATE TRIGGER before_food_ingredient_insert
     BEFORE INSERT ON Food_Ingredient
     FOR EACH ROW
 BEGIN
-    DECLARE food_stock_quantity INT;
-
     CALL check_quantity_not_zero(NEW.quantity);
 
-    SET food_stock_quantity = (
-        SELECT quantity
-        FROM Stock
-        WHERE idProduct = NEW.idFood
-    );
-
-    IF food_stock_quantity > 0 THEN
-        CALL send_exception('A stockable Food can\'t have Ingredients');
-    END IF;
+    CALL check_not_composed_food(NEW.idFood);
 END $$
 
 DROP TRIGGER IF EXISTS before_food_ingredient_update $$
@@ -400,19 +390,8 @@ CREATE TRIGGER before_food_ingredient_update
     BEFORE UPDATE ON Food_Ingredient
     FOR EACH ROW
 BEGIN
-    DECLARE food_stock_quantity INT;
-
     CALL check_quantity_not_zero(NEW.quantity);
-
-    SET food_stock_quantity = (
-        SELECT quantity
-        FROM Stock
-        WHERE idProduct = NEW.idFood
-    );
-
-    IF food_stock_quantity > 0 THEN
-        CALL send_exception('A stockable Food can\'t have Ingredients');
-    END IF;
+    CALL check_not_composed_food(NEW.idFood);
 END $$
 
 DROP TRIGGER IF EXISTS before_happy_hour_insert $$
@@ -506,7 +485,7 @@ BEGIN
         FROM Product_SupplyOrder
         WHERE idSupplyOrder = OLD.idSupplyOrder
     ) = 1 THEN
-        CALL send_exception('There needs to be at least one product by supply order!');
+        CALL send_exception('There needs to be at least one product per supply order!');
     END IF;
 END $$
 
