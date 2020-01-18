@@ -126,5 +126,29 @@ VALUES (3, '2019-12-24 18:00'),
        (16, '2020-03-17 17:00'),
        (17, '2020-03-17 17:00');
 
-
 -- ORDERS
+INSERT INTO `Order` (orderAt, tva)
+VALUES ('2019-02-01 09:22', 7.7),
+       ('2019-05-01 10:11', 7.7),
+       ('2019-12-04 17:00', 7.7),
+       ('2019-12-22 20:35', 7.7),
+       ('2020-01-01 00:15', 7.7),
+       ('2020-03-17 18:00', 7.7);
+
+INSERT INTO SupplyOrder (idOrder, idSupplier, idManager)
+VALUES (1, 1, 1),
+       (2, 1, 1);
+
+INSERT INTO CustomerOrder (idOrder, idWaiter, tableNB)
+VALUES (3, 2, 13),
+       (4, 2, 25),
+       (5, 2, 12),
+       (6, 2, 10);
+
+INSERT INTO Product_SupplyOrder (idProduct, idSupplyOrder, price, quantity)
+VALUES (3, 1, 4, 20),
+       (4, 1, 1, 10),
+       (15, 1, 1, 25),
+       (9, 2, 5, 300),
+       (14, 2, 2, 375),
+       (13, 2, 15, 50);
