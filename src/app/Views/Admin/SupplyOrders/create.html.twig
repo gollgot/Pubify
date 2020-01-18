@@ -64,24 +64,15 @@
                     </div>
                 </div>
 
-                <span class="plus-btn">+</span>
+                <a class="btn btn-primary btn-add-product text-white">Ajouter un produit</a>
 
                 <br>
                 <br>
-                <button class="btn btn-success">Create</button>
+                <button class="btn btn-success">Créer</button>
 
             </form>
 
         </div>
     </div>
 
-{% endblock %}
-
-{% block specificJS %}
-    $(document).ready(function() {
-        $(".plus-btn").click(function(){
-            var lastProduct = $(".product").last();
-            $(".product").first().clone().insertAfter(lastProduct);
-        });
-    });
 {% endblock %}
