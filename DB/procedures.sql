@@ -84,7 +84,7 @@ END $$
 DROP PROCEDURE IF EXISTS check_product_not_composed $$
 CREATE PROCEDURE check_product_not_composed(idProduct INT)
 BEGIN
-    # Check that the product
+    # Check that the product has ingredients
     IF (SELECT COUNT(*) FROM Food_Ingredient WHERE idFood = idProduct) > 0 THEN
         CALL send_exception('Composed products can\'t be stocked!');
     END IF;
@@ -106,24 +106,34 @@ BEGIN
     END IF;
 END $$
 
-DROP PROCEDURE IF EXISTS check_drink_sale_date_within_happy_hour_duration $$
-CREATE PROCEDURE check_drink_sale_date_within_happy_hour_duration(startAtHappyHour DATETIME, idDrink INT)
+DROP PROCEDURE IF EXISTS check_product_available $$
+CREATE PROCEDURE check_product_available(`date` DATETIME, idBuyable INT)
 BEGIN
-    DECLARE start_drink_sale DATETIME;
-    DECLARE end_drink_sale DATETIME;
-    DECLARE happy_hour_duration TIME;
+    DECLARE start_buyable_sale DATETIME;
+    DECLARE end_buyable_sale DATETIME;
 
-    SET start_drink_sale = (
+    SET start_buyable_sale = (
         SELECT startSaleDate
         FROM Buyable
-        WHERE idProduct = idDrink
+        WHERE idProduct = idBuyable
     );
 
-    SET end_drink_sale = (
+    SET end_buyable_sale = (
         SELECT endSaleDate
         FROM Buyable
-        WHERE idProduct = idDrink
+        WHERE idProduct = idBuyable
     );
+
+    if NOT (within_range_datetime(start_buyable_sale, end_buyable_sale, `date`) AND
+           within_range_datetime(start_buyable_sale, end_buyable_sale, `date`)) THEN
+        CALL send_exception('Product unavailable');
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_drink_available_during_happy_hour $$
+CREATE PROCEDURE check_drink_available_during_happy_hour(startAtHappyHour DATETIME, idDrink INT)
+BEGIN
+    DECLARE happy_hour_duration TIME;
 
     SET happy_hour_duration = (
         SELECT duration
@@ -131,11 +141,8 @@ BEGIN
         WHERE startAt = startAtHappyHour
     );
 
-    if NOT (within_range_datetime(start_drink_sale, end_drink_sale, startAtHappyHour) AND
-           within_range_datetime(start_drink_sale, end_drink_sale, ADDTIME(startAtHappyHour, happy_hour_duration))) THEN
-        CALL send_exception('Chosen drink can\'t be sold during the whole happy hour');
-    END IF;
-
+    CALL check_product_available(startAtHappyHour, idDrink);
+    CALL check_product_available(ADDTIME(startAtHappyHour, happy_hour_duration), idDrink);
 END $$
 
 DROP PROCEDURE IF EXISTS check_buyable_not_ingredient $$
