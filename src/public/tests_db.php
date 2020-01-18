@@ -202,12 +202,36 @@ $requests = [
         "result" => "Error: Alcohol level can't be negative"
     ],
     [
-        "query" => "UPDATE CustomerOrder SET idWaiter = 3 WHERE idOrder = 52",
+        "query" => "UPDATE CustomerOrder SET idWaiter = 1 WHERE idOrder = 50",
         "result" => "Error: Manager can't take a customerOrder"
     ],
     [
-        "query" => "UPDATE CustomerOrder SET idWaiter = 4 WHERE idOrder = 52",
+        "query" => "UPDATE SupplyOrder SET idManager = 2 WHERE idOrder = 51",
         "result" => "Error: Deleted waiter cannot take an order"
+    ],
+    [
+        "query" => "UPDATE CustomerOrder SET idWaiter = 4 WHERE idOrder = 50",
+        "result" => "Error: A delete staff can't take an order"
+    ],
+    [
+        "query" => "UPDATE SupplyOrder SET idManager = 3 WHERE idOrder = 51",
+        "result" => "Error: Deleted waiter cannot take an order"
+    ],
+    [
+        "query" => "UPDATE Manager SET active = 0 WHERE idStaff = 1",
+        "result" => "Error: Cannot delete the last waiter"
+    ],
+    [
+        "query" => "UPDATE Stock SET quantity = -2 WHERE idProduct = 3",
+        "result" => "Error: quantity can't be negative"
+    ],
+    [
+        "query" => "UPDATE Buyable SET price = -2 WHERE idProduct = 3",
+        "result" => "Error: price can't be negative"
+    ],
+    [
+        "query" => "UPDATE Buyable SET endSaleDate = '2019-01-15 08:00:00' WHERE idProduct = 3",
+        "result" => "Error: Starting sale date can't be greater than the ending date"
     ],
 
 ];
