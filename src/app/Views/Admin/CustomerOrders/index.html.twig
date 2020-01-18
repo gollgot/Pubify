@@ -1,0 +1,46 @@
+{% extends 'Layout/admin_layout.html.twig' %}
+
+{% block title %}Commandes clients{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            {% include 'FlashMessages/success.html.twig' %}
+
+            <h1>Toutes les commandes clients</h1>
+
+            <a class="btn btn-primary" href="{{ path_for('admin_customer-orders_create') }}">Ajouter une commande client</a><br><br>
+
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Date heure commande</th>
+                        <th scope="col">Commandé par</th>
+                        <th scope="col">Produit (qté commandée)</th>
+                        <th scope="col">TVA</th>
+                        <th scope="col">Prix total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <th scope="row">{{ order.orderAtFormated }}</th>
+                            <td>{{ order.name }} {{ order.lastname }}</td>
+                            <td>
+                                {% for product in order.linkedProducts %}
+                                    {{ product.product_name }} ({{ product.quantity }}),
+                                {% endfor%}
+                            </td>
+                            <td>{{ order.tva }}</td>
+                            <td>{{ order.tva }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+{% endblock %}
