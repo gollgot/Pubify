@@ -145,6 +145,71 @@ $requests = [
         "query" => "INSERT INTO SupplyOrder(idOrder, idSupplier, idManager) VALUES (52, 1, 3)",
         "result" => "Error: A deleted Staff cannot create an order"
     ],
+    [
+        "query" => "INSERT INTO Buyable_CustomerOrder(idBuyable, idCustomerOrder, price, quantity) VALUES (1, 50, -12, 2)",
+        "result" => "Error: Price can't be negative"
+    ],
+    [
+        "query" => "INSERT INTO Buyable_CustomerOrder(idBuyable, idCustomerOrder, price, quantity) VALUES (1, 50, 12, 0)",
+        "result" => "Error: Quantity can't be less than 1"
+    ],
+    [
+        "query" => "INSERT INTO Product_SupplyOrder(idProduct, idSupplyOrder, price, quantity) VALUES (3, 51, -12, 5)",
+        "result" => "Error: Price can't be negative"
+    ],
+    [
+        "query" => "INSERT INTO Product_SupplyOrder(idProduct, idSupplyOrder, price, quantity) VALUES (3, 51, 12, 0)",
+        "result" => "Error: Quantity can't be less than 1"
+    ],
+    [
+        "query" => "INSERT INTO Food_Ingredient(idFood, idIngredient, quantity) VALUES (1, 7, -2)",
+        "result" => "Error: Quantity can't be less than 1"
+    ],
+    [
+        "query" => "INSERT INTO Product(id, name, nameUnitMetric) VALUES (50, 'test', 'Bouteille')",
+        "result" => "OK"
+    ],
+    [
+        "query" => "INSERT INTO Buyable(idProduct, price, startSaleDate) VALUES (50, -1, NOW())",
+        "result" => "Error: Price can't be negative"
+    ],
+    [
+        "query" => "INSERT INTO Buyable(idProduct, price, startSaleDate, endSaleDate) VALUES (50, 12, NOW(), NOW() - 2)",
+        "result" => "Error: Starting sale date can't be greater than the ending date"
+    ],
+    [
+        "query" => "INSERT INTO Drink_HappyHour(idDrink, startAtHappyHour) VALUES (16, '2021-12-12 12:12')",
+        "result" => "Error: Chosen drink can't be sold during the whole happy hour"
+    ],
+    [
+        "query" => "UPDATE HappyHour SET duration='-2:00' WHERE startAt = '2021-12-12 12:12'",
+        "result" => "Error: Duration can't be negative"
+    ],
+    [
+        "query" => "UPDATE HappyHour SET startAt = '2020-03-17 18:00:00' WHERE startAt = '2021-12-12 12:12'",
+        "result" => "Error: Happy hours can't be overlapping"
+    ],
+    [
+        "query" => "UPDATE HappyHour SET reductionPercent = 0 WHERE startAt = '2021-12-12 12:12'",
+        "result" => "Error: Reduction percent needs to be between 1 and 100"
+    ],
+    [
+        "query" => "UPDATE HappyHour SET reductionPercent = 101 WHERE startAt = '2021-12-12 12:12'",
+        "result" => "Error: Reduction percent needs to be between 1 and 100"
+    ],
+    [
+        "query" => "UPDATE Drink SET alcoholLevel = -2 WHERE idBuyable = 3",
+        "result" => "Error: Alcohol level can't be negative"
+    ],
+    [
+        "query" => "UPDATE CustomerOrder SET idWaiter = 3 WHERE idOrder = 52",
+        "result" => "Error: Manager can't take a customerOrder"
+    ],
+    [
+        "query" => "UPDATE CustomerOrder SET idWaiter = 4 WHERE idOrder = 52",
+        "result" => "Error: Deleted waiter cannot take an order"
+    ],
+
 ];
 ?>
 
