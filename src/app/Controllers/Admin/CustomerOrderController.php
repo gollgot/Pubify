@@ -51,18 +51,26 @@ class CustomerOrderController extends Controller
     }
 
     /**
-     * Display the supply order create view to be able to create a new supply order
+     * Display the customer order create view to be able to create a new customer order
      *
      * @param Request $request
      * @param Response $response
      * @return mixed
      */
     public function createAction(Request $request, Response $response) {
+        // Fetch the pdo connection from the container dependency
+        $pdo = $this->container->db;
 
+        $query = $pdo->query("SELECT id, product_name, unit_name FROM vBuyable WHERE endSaleDate >= NOW() || endSaleDate IS NULL");
+        $buyables = $query->fetchAll();
+
+        return $this->render($response, 'Admin/CustomerOrders/create.html.twig', [
+            'buyables' => $buyables,
+        ]);
     }
 
     /**
-     * Store a new supply order created by the user
+     * Store a new customer order created by the user
      *
      * @param Request $request
      * @param Response $response
@@ -70,7 +78,8 @@ class CustomerOrderController extends Controller
      */
     public function storeAction(Request $request, Response $response)
     {
-
+        var_dump($request->getParams());
+        die();
     }
 
 

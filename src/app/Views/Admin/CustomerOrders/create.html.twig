@@ -20,6 +20,45 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="customer-orders-create-table">Table<span class="text-danger">*</span></label>
+                            <input type="number" min ="1" step="1" class="form-control" id="customer-orders-create-table" name="table" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="customer-orders-create-tva">TVA %<span class="text-danger">*</span></label>
+                            <input type="number" min ="0" step="0.05" class="form-control" id="customer-orders-create-tva" name="tva" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row product">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="customer-orders-create-product">Produit <span class="text-danger">*</span></label>
+                            <select id="customer-orders-create-product" class="form-control" name="productsId[]">
+                                {% for buyable in buyables %}
+                                    <option value="{{ buyable.id }}">{{ buyable.product_name }} ({{ buyable.unit_name }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="customer-orders-create-quantity">Quantité <span class="text-danger">*</span></label>
+                            <input type="number" min ="1" step="1" class="form-control" id="customer-orders-create-quantity" name="quantities[]" required>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="plus-btn">+</span>
+
+                <br>
+                <br>
+
                 <button class="btn btn-success">Create</button>
 
             </form>
@@ -30,5 +69,10 @@
 {% endblock %}
 
 {% block specificJS %}
-
+    $(document).ready(function() {
+        $(".plus-btn").click(function(){
+            var lastProduct = $(".product").last();
+            $(".product").first().clone().insertAfter(lastProduct);
+        });
+    });
 {% endblock %}
