@@ -6,22 +6,6 @@ DELIMITER $$
 -- GENERAL USAGE PROCEDURES n FUNCTIONS --
 -- ------------------------------------ --
 
-DROP FUNCTION IF EXISTS is_negative_int $$
-CREATE FUNCTION is_negative_int(num INT)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-    RETURN IF(num < 0, TRUE, FALSE);
-END $$
-
-DROP FUNCTION IF EXISTS is_negative_time $$
-CREATE FUNCTION is_negative_time(`time` TIME)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-    RETURN IF(`time` < 0, TRUE, FALSE);
-END $$
-
 DROP FUNCTION IF EXISTS within_range_int $$
 CREATE FUNCTION within_range_int(min INT, max INT, value INT)
 RETURNS BOOLEAN
@@ -67,10 +51,10 @@ DROP PROCEDURE IF EXISTS validate_happy_hour_reduction $$
 CREATE PROCEDURE validate_happy_hour_reduction(reduction INT)
 BEGIN
     DECLARE max_reduction_percent INT DEFAULT 100;
-    DECLARE min_reduction_percent INT DEFAULT 0;
+    DECLARE min_reduction_percent INT DEFAULT 1;
 
     IF NOT within_range_int(min_reduction_percent, max_reduction_percent, reduction) THEN
-        CALL send_exception('The reduction percent must be within 0 and 100');
+        CALL send_exception('The reduction percent must be within 1 and 100');
     END IF;
 END $$
 
@@ -87,6 +71,7 @@ CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_dura
 BEGIN
     DECLARE nb_overlapping INT;
     SET nb_overlapping = (
+        # Try and find any happy hours that overlap w/ the being inserted
         SELECT COUNT(*) FROM HappyHour
         WHERE new_startAt BETWEEN startAt AND ADDTIME(startAt, duration) OR
               startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration));
@@ -99,6 +84,7 @@ END $$
 DROP PROCEDURE IF EXISTS check_product_not_composed $$
 CREATE PROCEDURE check_product_not_composed(idProduct INT)
 BEGIN
+    # Check that the product
     IF (SELECT COUNT(*) FROM Food_Ingredient WHERE idFood = idProduct) > 0 THEN
         CALL send_exception('Composed products can\'t be stocked!');
     END IF;
