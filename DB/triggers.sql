@@ -479,7 +479,7 @@ BEGIN
     DECLARE current_nb_managers INT;
 
     IF NEW.active = 0 THEN
-        SET current_nb_managers = (SELECT COUNT(*) FROM Manager);
+        SET current_nb_managers = (SELECT COUNT(*) FROM Manager WHERE active = 1);
 
         -- If there is only one manager in the DB, then he or she can't be deleted
         IF current_nb_managers = 1 THEN
