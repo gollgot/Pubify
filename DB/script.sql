@@ -1372,7 +1372,8 @@ VALUES (1, 1),
 
 -- SUPPLIER
 INSERT INTO Supplier (name)
-VALUES ('Migros');
+VALUES ('Migros'),
+	   ('Aligro');
 
 -- PRODUCT
 INSERT INTO UnitMetric (name, shortname)
@@ -1470,7 +1471,7 @@ VALUES (1, 7, 200),
 INSERT INTO HappyHour (startAt, idManager, duration, reductionPercent)
 VALUES ('2019-12-24 18:00', 1, '01:00', 15),
        ('2020-01-01 00:00', 1, '02:00', 50),
-       ('2020-01-17 17:00', 1, '03:00', 75);
+       ('2020-03-17 17:00', 1, '03:00', 75);
 
 INSERT INTO Drink_HappyHour (idDrink, startAtHappyHour)
 VALUES (3, '2019-12-24 18:00'),
@@ -1494,7 +1495,7 @@ VALUES ('2019-02-01 09:22', 7.7),
        ('2019-12-04 17:00', 7.7),
        ('2019-12-22 20:35', 7.7),
        ('2020-01-01 00:15', 7.7),
-       ('2020-03-17 18:00', 7.7);
+       ('2020-01-17 18:00', 7.7);
 
 INSERT INTO SupplyOrder (idOrder, idSupplier, idManager)
 VALUES (1, 1, 1),
