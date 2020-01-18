@@ -18,9 +18,8 @@
                         <th scope="col">Date heure commande</th>
                         <th scope="col">Commandé par</th>
                         <th scope="col">Nom du fournisseur</th>
-                        <th scope="col">Quoi ?</th>
+                        <th scope="col">Produit (qté commandée)</th>
                         <th scope="col">tva</th>
-                        <th scope="col">Action</th>
                     </tr>
                 </thead>
 
@@ -30,7 +29,11 @@
                             <th scope="row">{{ order.orderAtFormated }}</th>
                             <td>{{ order.manager_name }} {{ order.manager_lastname }}</td>
                             <td>{{ order.supplier_name }}</td>
-                            <td></td>
+                            <td>
+                                {% for product in order.linkedProducts %}
+                                    {{ product.product_name }} ({{ product.quantity }}),
+                                {% endfor%}
+                            </td>
                             <td>{{ order.tva }}</td>
                         </tr>
                     {% endfor %}

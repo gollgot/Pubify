@@ -22,7 +22,6 @@
                     <th scope="col">Unité</th>
                     <th scope="col">Date début vente</th>
                     <th scope="col">Date fin vente</th>
-                    <th scope="col">Action</th>
                 </tr>
                 </thead>
 
@@ -37,7 +36,6 @@
                         <td>{{ drink.unit_name }}</td>
                         <td>{{ drink.startSaleDate }}</td>
                         <td>{{ drink.endSaleDate ? drink.endSaleDate : 'Aucune'}}</td>
-                        <td><a class="btn btn-warning" href="#">Modifier</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
