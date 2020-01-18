@@ -133,6 +133,18 @@ $requests = [
         "query" => "INSERT INTO Product_SupplyOrder(idProduct, idSupplyOrder, price, quantity) VALUES (1, 51, 12, 5)",
         "result" => "Error: can't order a composed food"
     ],
+    [
+        "query" => "INSERT INTO `Order`(id, orderAt, tva) VALUES (52, NOW(), 5)",
+        "result" => "OK"
+    ],
+    [
+        "query" => "INSERT INTO CustomerOrder(idOrder, idWaiter, tableNB) VALUES (52, 4, 12)",
+        "result" => "Error: A deleted Staff cannot create an order"
+    ],
+    [
+        "query" => "INSERT INTO SupplyOrder(idOrder, idSupplier, idManager) VALUES (52, 1, 3)",
+        "result" => "Error: A deleted Staff cannot create an order"
+    ],
 ];
 ?>
 
