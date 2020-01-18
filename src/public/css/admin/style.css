@@ -25,3 +25,15 @@ header a.logout {
 #page-content {
     margin-left: 250px;
 }
+
+span.plus-btn {
+    padding: 5px 10px 5px 10px;
+    border-radius: 20px;
+    background-color: #0056b3;
+    color:#FFF;
+    font-size: 20px;
+}
+
+span.plus-btn:hover{
+    cursor: pointer;
+}
