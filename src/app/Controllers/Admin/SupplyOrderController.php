@@ -27,7 +27,7 @@ class SupplyOrderController extends Controller
 
         // For each supply order, fetch his linked products and add them to the orders array to pass them to the view
         for($i = 0; $i < count($orders); ++$i){
-            $query = $pdo->prepare('SELECT product_name, Product_SupplyOrder.quantity FROM Product_SupplyOrder INNER JOIN vStockableProduct ON vStockableProduct.id = idProduct WHERE idSupplyOrder = :idOrder');
+            $query = $pdo->prepare('SELECT product_name, unit_shortName, Product_SupplyOrder.quantity FROM Product_SupplyOrder INNER JOIN vStockableProduct ON vStockableProduct.id = idProduct WHERE idSupplyOrder = :idOrder');
             $query->execute([
                 'idOrder' => $orders[$i]['id']
             ]);

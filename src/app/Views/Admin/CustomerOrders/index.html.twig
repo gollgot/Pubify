@@ -17,7 +17,7 @@
                     <tr>
                         <th scope="col">Date heure commande</th>
                         <th scope="col">Commandé par</th>
-                        <th scope="col">Produit (qté commandée)</th>
+                        <th scope="col">Produits commandés</th>
                         <th scope="col">TVA %</th>
                         <th scope="col">Prix total TTC (CHF)</th>
                     </tr>
@@ -30,7 +30,7 @@
                             <td>{{ order.name }} {{ order.lastname }}</td>
                             <td>
                                 {% for product in order.linkedProducts %}
-                                    {{ product.product_name }} ({{ product.quantity }}),
+                                    {{ product.quantity }}x {{ product.product_name }},
                                 {% endfor%}
                             </td>
                             <td>{{ order.tva }}</td>

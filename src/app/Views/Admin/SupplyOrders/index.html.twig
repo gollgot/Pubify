@@ -19,7 +19,7 @@
                         <th scope="col">Commandé par</th>
                         <th scope="col">Nom du fournisseur</th>
                         <th scope="col">Produit (qté commandée)</th>
-                        <th scope="col">tva</th>
+                        <th scope="col">TVA %</th>
                     </tr>
                 </thead>
 
@@ -31,7 +31,7 @@
                             <td>{{ order.supplier_name }}</td>
                             <td>
                                 {% for product in order.linkedProducts %}
-                                    {{ product.product_name }} ({{ product.quantity }}),
+                                    {{ product.product_name }} ({{ product.quantity }} {{ product.unit_shortName }}),
                                 {% endfor%}
                             </td>
                             <td>{{ order.tva }}</td>
