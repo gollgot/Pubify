@@ -422,7 +422,7 @@ CREATE TRIGGER before_happy_hour_insert
 BEGIN
     CALL check_staff_is_active(new.idManager);
     CALL validate_happy_hour_duration(NEW.duration);
-    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
+    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration, NEW.startAt);
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
@@ -433,7 +433,7 @@ CREATE TRIGGER before_happy_hour_update
 BEGIN
     CALL check_staff_is_active(NEW.idManager);
     CALL validate_happy_hour_duration(NEW.duration);
-    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
+    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration, OLD.startAt);
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
@@ -572,14 +572,7 @@ CREATE TRIGGER before_supply_order_insert
     FOR EACH ROW
 BEGIN
     CALL check_supply_order_not_customer_order(NEW.idOrder);
-
-    IF (
-           SELECT active
-           FROM Manager
-           WHERE idStaff = NEW.idManager
-       ) = 0 THEN
-        CALL send_exception('A deleted manager cannot take an order');
-    END IF;
+    CALL check_staff_is_active(NEW.idManager);
 END $$
 
 DROP TRIGGER IF EXISTS before_supply_order_update $$
@@ -588,14 +581,7 @@ CREATE TRIGGER before_supply_order_update
     FOR EACH ROW
 BEGIN
     CALL check_supply_order_not_customer_order(NEW.idOrder);
-
-    IF (
-           SELECT active
-           FROM Manager
-           WHERE idStaff = NEW.idManager
-       ) = 0 THEN
-        CALL send_exception('A deleted manager cannot take an order');
-    END IF;
+    CALL check_staff_is_active(NEW.idManager);
 END $$
 
 DROP TRIGGER IF EXISTS before_waiter_delete $$

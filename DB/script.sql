@@ -603,14 +603,16 @@ BEGIN
 END $$
 
 DROP PROCEDURE IF EXISTS check_happy_hour_not_overlapping $$
-CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_duration TIME)
+CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_duration TIME, old_startAt DATETIME)
 BEGIN
     DECLARE nb_overlapping INT;
     SET nb_overlapping = (
         # Try and find any happy hours that overlap w/ the being inserted
         SELECT COUNT(*) FROM HappyHour
-        WHERE new_startAt BETWEEN startAt AND ADDTIME(startAt, duration) OR
-              startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration));
+        WHERE startAt != old_startAt AND
+              (new_startAt BETWEEN startAt AND ADDTIME(startAt, duration) OR
+              startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration))
+        );
 
     IF nb_overlapping > 0 THEN
         CALL send_exception('Happy hours can\'t be overlapping');
@@ -766,7 +768,7 @@ DROP PROCEDURE IF EXISTS check_staff_is_active $$
 CREATE PROCEDURE check_staff_is_active(idStaff INT)
 BEGIN
     IF (SELECT id FROM vActiveStaff WHERE id = idStaff) IS NULL THEN
-        CALL send_exception('A deleted staff can\'t perform any action');
+        CALL send_exception('A deleted staff can\'t perform any actions');
     END IF;
 END $$
 
@@ -1195,7 +1197,7 @@ CREATE TRIGGER before_happy_hour_insert
 BEGIN
     CALL check_staff_is_active(new.idManager);
     CALL validate_happy_hour_duration(NEW.duration);
-    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
+    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration, NEW.startAt);
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
@@ -1206,7 +1208,7 @@ CREATE TRIGGER before_happy_hour_update
 BEGIN
     CALL check_staff_is_active(NEW.idManager);
     CALL validate_happy_hour_duration(NEW.duration);
-    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration);
+    CALL check_happy_hour_not_overlapping(NEW.startAt, NEW.duration, OLD.startAt);
     CALL validate_happy_hour_reduction(NEW.reductionPercent);
 END $$
 
@@ -1345,14 +1347,7 @@ CREATE TRIGGER before_supply_order_insert
     FOR EACH ROW
 BEGIN
     CALL check_supply_order_not_customer_order(NEW.idOrder);
-
-    IF (
-           SELECT active
-           FROM Manager
-           WHERE idStaff = NEW.idManager
-       ) = 0 THEN
-        CALL send_exception('A deleted manager cannot take an order');
-    END IF;
+    CALL check_staff_is_active(NEW.idManager);
 END $$
 
 DROP TRIGGER IF EXISTS before_supply_order_update $$
@@ -1361,14 +1356,7 @@ CREATE TRIGGER before_supply_order_update
     FOR EACH ROW
 BEGIN
     CALL check_supply_order_not_customer_order(NEW.idOrder);
-
-    IF (
-           SELECT active
-           FROM Manager
-           WHERE idStaff = NEW.idManager
-       ) = 0 THEN
-        CALL send_exception('A deleted manager cannot take an order');
-    END IF;
+    CALL check_staff_is_active(NEW.idManager);
 END $$
 
 DROP TRIGGER IF EXISTS before_waiter_delete $$

@@ -67,14 +67,16 @@ BEGIN
 END $$
 
 DROP PROCEDURE IF EXISTS check_happy_hour_not_overlapping $$
-CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_duration TIME)
+CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_duration TIME, old_startAt DATETIME)
 BEGIN
     DECLARE nb_overlapping INT;
     SET nb_overlapping = (
         # Try and find any happy hours that overlap w/ the being inserted
         SELECT COUNT(*) FROM HappyHour
-        WHERE new_startAt BETWEEN startAt AND ADDTIME(startAt, duration) OR
-              startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration));
+        WHERE startAt != old_startAt AND
+              (new_startAt BETWEEN startAt AND ADDTIME(startAt, duration) OR
+              startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration))
+        );
 
     IF nb_overlapping > 0 THEN
         CALL send_exception('Happy hours can\'t be overlapping');
@@ -230,7 +232,7 @@ DROP PROCEDURE IF EXISTS check_staff_is_active $$
 CREATE PROCEDURE check_staff_is_active(idStaff INT)
 BEGIN
     IF (SELECT id FROM vActiveStaff WHERE id = idStaff) IS NULL THEN
-        CALL send_exception('A deleted staff can\'t perform any action');
+        CALL send_exception('A deleted staff can\'t perform any actions');
     END IF;
 END $$
 
