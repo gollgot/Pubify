@@ -30,7 +30,9 @@
                 {% endif %}
                 <li class='has-sub'><a href='#'><span>Commandes</span></a>
                     <ul>
-                        <li><a href='{{ path_for('admin_customer-orders_index') }}'><span>Client</span></a></li>
+                        {% if hasRole('waiter') %}
+                            <li><a href='{{ path_for('admin_customer-orders_index') }}'><span>Client</span></a></li>
+                        {% endif %}
                         {% if hasRole('manager') %}
                             <li><a href='{{ path_for('admin_supply-orders_index') }}'><span>Fournisseur</span></a></li>
                         {% endif %}

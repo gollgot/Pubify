@@ -2,6 +2,7 @@
 
 use App\Controllers\Admin\CustomerOrderController;
 use App\Middlewares\AuthMiddleware;
+use App\Middlewares\HasRoleMiddleware;
 
 // the keyword "use" -> to do a parameter inheritance to a closure
 $app->group('/admin', function () use ($container) {
@@ -15,4 +16,5 @@ $app->group('/admin', function () use ($container) {
         ->post('/customer-orders', CustomerOrderController::class.":storeAction")
         ->setName("admin_customer-orders_store");
 })
-    ->add(new AuthMiddleware($container));
+    ->add(new AuthMiddleware($container))
+    ->add(new HasRoleMiddleware($container, "waiter"));

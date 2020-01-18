@@ -1566,7 +1566,8 @@ VALUES (3, 5),
 
 INSERT INTO Food
 VALUES (1),
-       (2);
+       (2),
+       (18);
 
 INSERT INTO Food_Ingredient (idFood, idIngredient, quantity)
 VALUES (1, 7, 200),
@@ -1606,7 +1607,7 @@ VALUES ('2019-02-01 09:22', 7.7),
        ('2019-12-04 17:00', 7.7),
        ('2019-12-22 20:35', 7.7),
        ('2020-01-01 00:15', 7.7),
-       ('2020-03-17 18:00', 7.7);
+       ('2020-01-02 18:00', 7.7);
 
 INSERT INTO SupplyOrder (idOrder, idSupplier, idManager)
 VALUES (1, 1, 1),
