@@ -126,69 +126,6 @@ BEGIN
     END IF;
 END $$
 
-DROP TRIGGER IF EXISTS after_buyable_customer_order_update $$
-CREATE TRIGGER after_buyable_customer_order_update
-    AFTER UPDATE ON Buyable_CustomerOrder
-    FOR EACH ROW
-BEGIN
-    -- todo: Adapt stock +/-
-    DECLARE finished INT DEFAULT 0;
-    DECLARE ingredient_id INT;
-    DECLARE used_quantity INT;
-    DECLARE quantity_diff INT;
-
-    -- declare cursor for the buyables ingredients
-    DECLARE cur_ingredient
-        CURSOR FOR (
-            SELECT Food_Ingredient.idIngredient
-            FROM Food_Ingredient
-            WHERE Food_Ingredient.idFood = NEW.idBuyable
-        );
-
-    -- declare NOT FOUND handler
-    DECLARE CONTINUE HANDLER
-        FOR NOT FOUND SET finished = 1;
-
-    SET quantity_diff = OLD.quantity - NEW.quantity;
-    -- check if the affected product is stockable
-    -- or if it's composed of ingredients
-    IF (
-        SELECT id
-        FROM Stock
-        WHERE idProduct = NEW.idBuyable
-    ) IS NOT NULL THEN
-        -- it's sotckable so we directly update the stock
-        UPDATE Stock
-        SET Stock.quantity = (Stock.quantity + quantity_diff)
-        WHERE idProduct = NEW.idBuyable;
-    ELSE
-        -- it's composed, so we need to update all of the ingredients
-        OPEN cur_ingredient;
-
-        -- loop through all the ingredients
-        updateIngredientStock: LOOP
-            FETCH cur_ingredient INTO ingredient_id;
-            IF finished = 1 THEN
-                LEAVE updateIngredientStock;
-            END IF;
-
-            -- get the quantity used of the current ingredient
-            SET used_quantity = (
-                SELECT quantity
-                FROM Food_Ingredient
-                WHERE idFood = NEW.idBuyable AND
-                        idIngredient = ingredient_id
-            );
-            -- update current ingredient stock
-            UPDATE Stock
-            SET Stock.quantity = (Stock.quantity + used_quantity * quantity_diff)
-            WHERE idProduct = ingredient_id;
-        END LOOP;
-
-        CLOSE cur_ingredient;
-    END IF;
-END $$
-
 DROP TRIGGER IF EXISTS after_customer_order_delete $$
 CREATE TRIGGER after_customer_order_delete
     AFTER DELETE ON CustomerOrder
@@ -215,23 +152,6 @@ CREATE TRIGGER after_product_supply_order_insert
 BEGIN
     UPDATE Stock
     SET quantity = quantity + NEW.quantity
-    WHERE idProduct = NEW.idProduct;
-END $$
-
-DROP TRIGGER IF EXISTS after_product_supply_order_update $$
-CREATE TRIGGER after_product_supply_order_update
-    AFTER UPDATE ON Product_SupplyOrder
-    FOR EACH ROW
-BEGIN
-    DECLARE new_quantity INT;
-    IF NEW.quantity < OLD.quantity THEN
-        SET new_quantity = -(OLD.quantity - NEW.quantity);
-    ELSE
-        SET new_quantity = NEW.quantity - OLD.quantity;
-    END IF;
-
-    UPDATE Stock
-    SET quantity = quantity + new_quantity
     WHERE idProduct = NEW.idProduct;
 END $$
 
@@ -294,8 +214,17 @@ CREATE TRIGGER before_buyable_customer_order_insert
 BEGIN
     DECLARE stock_id INT;
     DECLARE error BOOLEAN;
+    DECLARE order_date DATETIME;
 
     CALL check_quantity_not_zero(NEW.quantity);
+
+    SET order_date = (
+        SELECT orderAt
+        FROM `Order`
+        WHERE id = NEW.idCustomerOrder
+    );
+
+    CALL check_product_available(order_date, NEW.idBuyable);
 
     SET stock_id = (
         SELECT id
@@ -331,7 +260,7 @@ CREATE TRIGGER before_buyable_customer_order_update
     BEFORE UPDATE ON Buyable_CustomerOrder
     FOR EACH ROW
 BEGIN
-    CALL check_quantity_not_zero(NEW.quantity);
+    CALL send_exception('UPDATE query not allowed on Buyable_CustomerOrder');
 END $$
 
 DROP TRIGGER IF EXISTS before_customer_order_insert $$
@@ -397,7 +326,7 @@ CREATE TRIGGER before_drink_happy_hour_insert
     BEFORE INSERT ON Drink_HappyHour
     FOR EACH ROW
 BEGIN
-    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink);
+    CALL check_drink_available_during_happy_hour(NEW.startAtHappyHour, NEW.idDrink);
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_happy_hour_update $$
@@ -405,7 +334,7 @@ CREATE TRIGGER before_drink_happy_hour_update
     BEFORE UPDATE ON Drink_HappyHour
     FOR EACH ROW
 BEGIN
-    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink, OLD.startAtHappyHour);
+    CALL check_drink_available_during_happy_hour(NEW.startAtHappyHour, NEW.idDrink, OLD.startAtHappyHour);
 END $$
 
 DROP TRIGGER IF EXISTS before_food_delete $$
@@ -602,15 +531,7 @@ CREATE TRIGGER before_product_supply_order_update
     BEFORE UPDATE ON Product_SupplyOrder
     FOR EACH ROW
 BEGIN
-    CALL check_quantity_not_zero(NEW.quantity);
-
-    IF (
-        SELECT id
-        FROM vStockableProduct
-        WHERE id = NEW.idProduct
-    ) IS NULL THEN
-        CALL send_exception('Cannot order a product composed with ingredients');
-    END IF;
+    CALL send_exception('UPDATE query not allowed on Product_SupplyOrder');
 END $$
 
 DROP TRIGGER IF EXISTS before_staff_delete $$

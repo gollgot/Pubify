@@ -367,12 +367,7 @@ ALTER TABLE Waiter
         FOREIGN KEY (idStaff)
             REFERENCES Staff (id)
             ON DELETE RESTRICT
-            ON UPDATE CASCADE;
-
--- -----------------------------------------------------
--- PUBify Views
--- -----------------------------------------------------
-DROP VIEW IF EXISTS vActiveStaff;
+            ON UPDATE CASCADE;DROP VIEW IF EXISTS vActiveStaff;
 CREATE VIEW vActiveStaff
 AS
 SELECT Staff.id,
@@ -380,7 +375,7 @@ SELECT Staff.id,
        Staff.name,
        Staff.lastname,
        Staff.password
-FROM Staff
+FROM Staff 
     INNER JOIN Waiter
         ON Staff.id = Waiter.idStaff
 WHERE active = 1
@@ -507,7 +502,7 @@ SELECT vStockableBuyable.*
 FROM Food
     INNER JOIN vStockableBuyable
         ON Food.idBuyable = vStockableBuyable.id;
-
+        
 DROP VIEW IF EXISTS vNonstockableFood;
 CREATE VIEW vNonstockableFood
 AS
@@ -539,28 +534,13 @@ SELECT vStockableProduct.*
 FROM vStockableProduct
     INNER JOIN Ingredient
         ON Ingredient.idProduct = vStockableProduct.id;
-
--- -----------------------------------------------------
--- PUBify Procedures
--- -----------------------------------------------------
+USE PUBify;
 
 DELIMITER $$
 
-DROP FUNCTION IF EXISTS is_negative_int $$
-CREATE FUNCTION is_negative_int(num INT)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-    RETURN IF(num < 0, TRUE, FALSE);
-END $$
-
-DROP FUNCTION IF EXISTS is_negative_time $$
-CREATE FUNCTION is_negative_time(`time` TIME)
-RETURNS BOOLEAN
-DETERMINISTIC
-BEGIN
-    RETURN IF(`time` < 0, TRUE, FALSE);
-END $$
+-- ------------------------------------ --
+-- GENERAL USAGE PROCEDURES n FUNCTIONS --
+-- ------------------------------------ --
 
 DROP FUNCTION IF EXISTS within_range_int $$
 CREATE FUNCTION within_range_int(min INT, max INT, value INT)
@@ -586,6 +566,10 @@ BEGIN
     RETURN IF(min <= value && (max IS NULL OR max >= value), TRUE, FALSE);
 END $$
 
+-- ------------------------------- --
+-- SPECIFIC PROCEDURES n FUNCTIONS --
+-- ------------------------------- --
+
 /* DRINK */
 DROP PROCEDURE IF EXISTS validate_alcohol_level $$
 CREATE PROCEDURE validate_alcohol_level(alcohol_level DECIMAL)
@@ -603,10 +587,10 @@ DROP PROCEDURE IF EXISTS validate_happy_hour_reduction $$
 CREATE PROCEDURE validate_happy_hour_reduction(reduction INT)
 BEGIN
     DECLARE max_reduction_percent INT DEFAULT 100;
-    DECLARE min_reduction_percent INT DEFAULT 0;
+    DECLARE min_reduction_percent INT DEFAULT 1;
 
     IF NOT within_range_int(min_reduction_percent, max_reduction_percent, reduction) THEN
-        CALL send_exception('The reduction percent must be within 0 and 100');
+        CALL send_exception('The reduction percent must be within 1 and 100');
     END IF;
 END $$
 
@@ -623,6 +607,7 @@ CREATE PROCEDURE check_happy_hour_not_overlapping(new_startAt DATETIME, new_dura
 BEGIN
     DECLARE nb_overlapping INT;
     SET nb_overlapping = (
+        # Try and find any happy hours that overlap w/ the being inserted
         SELECT COUNT(*) FROM HappyHour
         WHERE new_startAt BETWEEN startAt AND ADDTIME(startAt, duration) OR
               startAt BETWEEN new_startAt AND ADDTIME(new_startAt, new_duration));
@@ -635,6 +620,7 @@ END $$
 DROP PROCEDURE IF EXISTS check_product_not_composed $$
 CREATE PROCEDURE check_product_not_composed(idProduct INT)
 BEGIN
+    # Check that the product has ingredients
     IF (SELECT COUNT(*) FROM Food_Ingredient WHERE idFood = idProduct) > 0 THEN
         CALL send_exception('Composed products can\'t be stocked!');
     END IF;
@@ -656,24 +642,34 @@ BEGIN
     END IF;
 END $$
 
-DROP PROCEDURE IF EXISTS check_drink_sale_date_within_happy_hour_duration $$
-CREATE PROCEDURE check_drink_sale_date_within_happy_hour_duration(startAtHappyHour DATETIME, idDrink INT)
+DROP PROCEDURE IF EXISTS check_product_available $$
+CREATE PROCEDURE check_product_available(`date` DATETIME, idBuyable INT)
 BEGIN
-    DECLARE start_drink_sale DATETIME;
-    DECLARE end_drink_sale DATETIME;
-    DECLARE happy_hour_duration TIME;
+    DECLARE start_buyable_sale DATETIME;
+    DECLARE end_buyable_sale DATETIME;
 
-    SET start_drink_sale = (
+    SET start_buyable_sale = (
         SELECT startSaleDate
         FROM Buyable
-        WHERE idProduct = idDrink
+        WHERE idProduct = idBuyable
     );
 
-    SET end_drink_sale = (
+    SET end_buyable_sale = (
         SELECT endSaleDate
         FROM Buyable
-        WHERE idProduct = idDrink
+        WHERE idProduct = idBuyable
     );
+
+    if NOT (within_range_datetime(start_buyable_sale, end_buyable_sale, `date`) AND
+           within_range_datetime(start_buyable_sale, end_buyable_sale, `date`)) THEN
+        CALL send_exception('Product unavailable');
+    END IF;
+END $$
+
+DROP PROCEDURE IF EXISTS check_drink_available_during_happy_hour $$
+CREATE PROCEDURE check_drink_available_during_happy_hour(startAtHappyHour DATETIME, idDrink INT)
+BEGIN
+    DECLARE happy_hour_duration TIME;
 
     SET happy_hour_duration = (
         SELECT duration
@@ -681,11 +677,8 @@ BEGIN
         WHERE startAt = startAtHappyHour
     );
 
-    if NOT (within_range_datetime(start_drink_sale, end_drink_sale, startAtHappyHour) AND
-           within_range_datetime(start_drink_sale, end_drink_sale, ADDTIME(startAtHappyHour, happy_hour_duration))) THEN
-        CALL send_exception('Chosen drink can\'t be sold during the whole happy hour');
-    END IF;
-
+    CALL check_product_available(startAtHappyHour, idDrink);
+    CALL check_product_available(ADDTIME(startAtHappyHour, happy_hour_duration), idDrink);
 END $$
 
 DROP PROCEDURE IF EXISTS check_buyable_not_ingredient $$
@@ -777,11 +770,10 @@ BEGIN
     END IF;
 END $$
 
+DELIMITER ;
+USE PUBify;
 
--- -----------------------------------------------------
--- PUBify Triggers
--- -----------------------------------------------------
-
+DELIMITER $$
 -- -----------------------------------------------
 -- AFTER Triggers
 -- -----------------------------------------------
@@ -907,69 +899,6 @@ BEGIN
     END IF;
 END $$
 
-DROP TRIGGER IF EXISTS after_buyable_customer_order_update $$
-CREATE TRIGGER after_buyable_customer_order_update
-    AFTER UPDATE ON Buyable_CustomerOrder
-    FOR EACH ROW
-BEGIN
-    -- todo: Adapt stock +/-
-    DECLARE finished INT DEFAULT 0;
-    DECLARE ingredient_id INT;
-    DECLARE used_quantity INT;
-    DECLARE quantity_diff INT;
-
-    -- declare cursor for the buyables ingredients
-    DECLARE cur_ingredient
-        CURSOR FOR (
-            SELECT Food_Ingredient.idIngredient
-            FROM Food_Ingredient
-            WHERE Food_Ingredient.idFood = NEW.idBuyable
-        );
-
-    -- declare NOT FOUND handler
-    DECLARE CONTINUE HANDLER
-        FOR NOT FOUND SET finished = 1;
-
-    SET quantity_diff = OLD.quantity - NEW.quantity;
-    -- check if the affected product is stockable
-    -- or if it's composed of ingredients
-    IF (
-        SELECT id
-        FROM Stock
-        WHERE idProduct = NEW.idBuyable
-    ) IS NOT NULL THEN
-        -- it's sotckable so we directly update the stock
-        UPDATE Stock
-        SET Stock.quantity = (Stock.quantity + quantity_diff)
-        WHERE idProduct = NEW.idBuyable;
-    ELSE
-        -- it's composed, so we need to update all of the ingredients
-        OPEN cur_ingredient;
-
-        -- loop through all the ingredients
-        updateIngredientStock: LOOP
-            FETCH cur_ingredient INTO ingredient_id;
-            IF finished = 1 THEN
-                LEAVE updateIngredientStock;
-            END IF;
-
-            -- get the quantity used of the current ingredient
-            SET used_quantity = (
-                SELECT quantity
-                FROM Food_Ingredient
-                WHERE idFood = NEW.idBuyable AND
-                        idIngredient = ingredient_id
-            );
-            -- update current ingredient stock
-            UPDATE Stock
-            SET Stock.quantity = (Stock.quantity + used_quantity * quantity_diff)
-            WHERE idProduct = ingredient_id;
-        END LOOP;
-
-        CLOSE cur_ingredient;
-    END IF;
-END $$
-
 DROP TRIGGER IF EXISTS after_customer_order_delete $$
 CREATE TRIGGER after_customer_order_delete
     AFTER DELETE ON CustomerOrder
@@ -996,23 +925,6 @@ CREATE TRIGGER after_product_supply_order_insert
 BEGIN
     UPDATE Stock
     SET quantity = quantity + NEW.quantity
-    WHERE idProduct = NEW.idProduct;
-END $$
-
-DROP TRIGGER IF EXISTS after_product_supply_order_update $$
-CREATE TRIGGER after_product_supply_order_update
-    AFTER UPDATE ON Product_SupplyOrder
-    FOR EACH ROW
-BEGIN
-    DECLARE new_quantity INT;
-    IF NEW.quantity < OLD.quantity THEN
-        SET new_quantity = -(OLD.quantity - NEW.quantity);
-    ELSE
-        SET new_quantity = NEW.quantity - OLD.quantity;
-    END IF;
-
-    UPDATE Stock
-    SET quantity = quantity + new_quantity
     WHERE idProduct = NEW.idProduct;
 END $$
 
@@ -1075,8 +987,17 @@ CREATE TRIGGER before_buyable_customer_order_insert
 BEGIN
     DECLARE stock_id INT;
     DECLARE error BOOLEAN;
+    DECLARE order_date DATETIME;
 
     CALL check_quantity_not_zero(NEW.quantity);
+
+    SET order_date = (
+        SELECT orderAt
+        FROM `Order`
+        WHERE id = NEW.idCustomerOrder
+    );
+
+    CALL check_product_available(order_date, NEW.idBuyable);
 
     SET stock_id = (
         SELECT id
@@ -1112,7 +1033,7 @@ CREATE TRIGGER before_buyable_customer_order_update
     BEFORE UPDATE ON Buyable_CustomerOrder
     FOR EACH ROW
 BEGIN
-    CALL check_quantity_not_zero(NEW.quantity);
+    CALL send_exception('UPDATE query not allowed on Buyable_CustomerOrder');
 END $$
 
 DROP TRIGGER IF EXISTS before_customer_order_insert $$
@@ -1178,7 +1099,7 @@ CREATE TRIGGER before_drink_happy_hour_insert
     BEFORE INSERT ON Drink_HappyHour
     FOR EACH ROW
 BEGIN
-    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink);
+    CALL check_drink_available_during_happy_hour(NEW.startAtHappyHour, NEW.idDrink);
 END $$
 
 DROP TRIGGER IF EXISTS before_drink_happy_hour_update $$
@@ -1186,7 +1107,7 @@ CREATE TRIGGER before_drink_happy_hour_update
     BEFORE UPDATE ON Drink_HappyHour
     FOR EACH ROW
 BEGIN
-    CALL check_drink_sale_date_within_happy_hour_duration(NEW.startAtHappyHour, NEW.idDrink, OLD.startAtHappyHour);
+    CALL check_drink_available_during_happy_hour(NEW.startAtHappyHour, NEW.idDrink, OLD.startAtHappyHour);
 END $$
 
 DROP TRIGGER IF EXISTS before_food_delete $$
@@ -1383,15 +1304,7 @@ CREATE TRIGGER before_product_supply_order_update
     BEFORE UPDATE ON Product_SupplyOrder
     FOR EACH ROW
 BEGIN
-    CALL check_quantity_not_zero(NEW.quantity);
-
-    IF (
-        SELECT id
-        FROM vStockableProduct
-        WHERE id = NEW.idProduct
-    ) IS NULL THEN
-        CALL send_exception('Cannot order a product composed with ingredients');
-    END IF;
+    CALL send_exception('UPDATE query not allowed on Product_SupplyOrder');
 END $$
 
 DROP TRIGGER IF EXISTS before_staff_delete $$
@@ -1466,11 +1379,7 @@ BEGIN
     CALL send_exception('DELETE query not allowed on waiter');
 END $$
 
-DELIMITER ;
-
--- -----------------------------------------------------
--- PUBify Seeds
--- -----------------------------------------------------
+DELIMITER ;USE PUBify;
 
 -- STAFF
 INSERT INTO Staff (email, name, lastname, password)
@@ -1570,8 +1479,7 @@ VALUES (3, 5),
 
 INSERT INTO Food
 VALUES (1),
-       (2),
-       (18);
+       (2);
 
 INSERT INTO Food_Ingredient (idFood, idIngredient, quantity)
 VALUES (1, 7, 200),
@@ -1611,7 +1519,7 @@ VALUES ('2019-02-01 09:22', 7.7),
        ('2019-12-04 17:00', 7.7),
        ('2019-12-22 20:35', 7.7),
        ('2020-01-01 00:15', 7.7),
-       ('2020-01-02 18:00', 7.7);
+       ('2020-03-17 18:00', 7.7);
 
 INSERT INTO SupplyOrder (idOrder, idSupplier, idManager)
 VALUES (1, 1, 1),
