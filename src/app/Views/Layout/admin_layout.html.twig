@@ -20,8 +20,8 @@
                 {% if hasRole('manager') %}
                     <li class='has-sub'><a href='#'><span>Nourriture</span></a>
                         <ul>
-                            <li><a href='#'><span>Non-composée</span></a></li>
-                            <li><a href='#'><span>Composée</span></a></li>
+                            <li><a href='{{ path_for('admin_foods_index') }}'><span>Non-composée</span></a></li>
+                            <li><a href='{{ path_for('admin_composed-foods_index') }}'><span>Composée</span></a></li>
                             <li><a href='{{ path_for('admin_ingredients_index') }}'><span>Ingrédients</span></a></li>
                         </ul>
                     </li>

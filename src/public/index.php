@@ -24,6 +24,8 @@ require '../app/Routes/Admin/dashboard.php';
 require '../app/Routes/Admin/drinks.php';
 require '../app/Routes/Admin/happyhours.php';
 require '../app/Routes/Admin/ingredients.php';
+require '../app/Routes/Admin/composedFoods.php';
+require '../app/Routes/Admin/foods.php';
 require '../app/Routes/Admin/supplyOrders.php';
 require '../app/Routes/Admin/customerOrders.php';
 
