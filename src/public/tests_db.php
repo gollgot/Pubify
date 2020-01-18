@@ -72,6 +72,10 @@ $requests = [
         "query" => "INSERT INTO HappyHour (startAt, idManager, duration, reductionPercent) VALUES ('2021-12-12 13:12', 1, '2:00', 12)",
         "result" => "Error: Happy hours can't be overlapping"
     ],
+    [
+        "query" => "",
+        "result" => ""
+    ]
 ];
 ?>
 
