@@ -236,7 +236,7 @@ END $$
 DROP PROCEDURE IF EXISTS check_staff_is_active $$
 CREATE PROCEDURE check_staff_is_active(idStaff INT)
 BEGIN
-    IF (SELECT * FROM vActiveStaff WHERE id = idStaff) IS NULL THEN
+    IF (SELECT id FROM vActiveStaff WHERE id = idStaff) IS NULL THEN
         CALL send_exception('A deleted staff can\'t perform any action');
     END IF;
 END $$
