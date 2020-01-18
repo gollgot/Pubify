@@ -1470,7 +1470,7 @@ VALUES (1, 7, 200),
 INSERT INTO HappyHour (startAt, idManager, duration, reductionPercent)
 VALUES ('2019-12-24 18:00', 1, '01:00', 15),
        ('2020-01-01 00:00', 1, '02:00', 50),
-       ('2020-03-17 17:00', 1, '03:00', 75);
+       ('2020-01-17 17:00', 1, '03:00', 75);
 
 INSERT INTO Drink_HappyHour (idDrink, startAtHappyHour)
 VALUES (3, '2019-12-24 18:00'),
