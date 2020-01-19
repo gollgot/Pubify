@@ -1381,15 +1381,18 @@ INSERT INTO Staff (email, name, lastname, password)
 VALUES ('manager@pubify.lo', 'Daenerys', 'Targaryen', '1234'),
        ('waiter@pubify.lo', 'John', 'Snow', '1234'),
        ('manger.disabled@pubify.lo', 'Thomas', 'Shelby', '1234'),
-       ('waiter.disabled@pubify.lo', 'John', 'Doe', '1234');
+       ('waiter.disabled@pubify.lo', 'John', 'Doe', '1234'),
+       ('manager+waiter@pubify.lo', 'Rubber', 'Duck', '1234');
 
 INSERT INTO Waiter (idStaff, active)
 VALUES (2, 1),
-       (4, 0);
+       (4, 0),
+       (5, 1);
 
 INSERT INTO Manager (idStaff, active)
 VALUES (1, 1),
-       (3, 0);
+       (3, 0),
+       (5, 1);
 
 -- SUPPLIER
 INSERT INTO Supplier (name)
