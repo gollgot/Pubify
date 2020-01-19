@@ -61,7 +61,7 @@ class CustomerOrderController extends Controller
         // Fetch the pdo connection from the container dependency
         $pdo = $this->container->db;
 
-        $query = $pdo->query("SELECT id, product_name, unit_name FROM vBuyable WHERE endSaleDate >= NOW() || endSaleDate IS NULL");
+        $query = $pdo->query("SELECT id, product_name, unit_name FROM vBuyable WHERE (NOW() BETWEEN startSaleDate AND endSaleDate) || (NOW() >= startSaleDate AND endSaleDate IS NULL) ");
         $buyables = $query->fetchAll();
 
         return $this->render($response, 'Admin/CustomerOrders/create.html.twig', [

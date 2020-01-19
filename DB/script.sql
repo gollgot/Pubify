@@ -1393,7 +1393,8 @@ VALUES (1, 1),
 
 -- SUPPLIER
 INSERT INTO Supplier (name)
-VALUES ('Migros');
+VALUES ('Migros'),
+	   ('Aligro');
 
 -- PRODUCT
 INSERT INTO UnitMetric (name, shortname)
@@ -1474,7 +1475,8 @@ VALUES (3, 5),
 
 INSERT INTO Food
 VALUES (1),
-       (2);
+       (2),
+       (18);
 
 INSERT INTO Food_Ingredient (idFood, idIngredient, quantity)
 VALUES (1, 7, 200),
