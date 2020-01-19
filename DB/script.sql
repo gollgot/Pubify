@@ -1050,7 +1050,7 @@ BEGIN
                 WHERE startAtHappyHour = startAt AND idDrink = NEW.idBuyable
             )
     );
-    
+
     -- if a discount was found then we can apply it to the price
     IF (discount IS NOT NULL) THEN
         SET saving = NEW.price * discount / 100;
