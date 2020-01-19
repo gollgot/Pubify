@@ -20,7 +20,7 @@ class HappyHourController extends Controller
         $pdo = $this->container->db;
 
         // Fetch all next happyhours (date >= now())
-        $query = $pdo->query("SELECT duration, reductionPercent, startAt, DATE_FORMAT(startAt, '%d.%m.%Y %H:%i') as startAtFormated FROM HappyHour WHERE startAt + duration >= NOW() ORDER BY startAt");
+        $query = $pdo->query("SELECT duration, reductionPercent, startAt, DATE_FORMAT(startAt, '%d.%m.%Y %H:%i') as startAtFormated FROM HappyHour WHERE ADDTIME(startAt, duration)  >= NOW() ORDER BY startAt");
         $happyhours = $query->fetchAll();
 
         // For each happy hour, fetch his linked drinks and add them to the happyHour array to pass them to the view
