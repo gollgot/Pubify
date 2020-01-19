@@ -995,6 +995,8 @@ BEGIN
     DECLARE stock_id INT;
     DECLARE error BOOLEAN;
     DECLARE order_date DATETIME;
+    DECLARE discount INT;
+    DECLARE saving DOUBLE;
 
     CALL check_quantity_not_zero(NEW.quantity);
 
@@ -1034,6 +1036,25 @@ BEGIN
 
     IF error = true THEN
         CALL send_exception('Not enough stock for the order');
+    END IF;
+
+    -- check if the current order is during a happy hour and
+    -- that the product has any discounts
+    SET discount = (
+        SELECT reductionPercent
+        FROM HappyHour
+        WHERE order_date BETWEEN startAt AND ADDTIME(startAt, duration) AND
+            EXISTS (
+                SELECT *
+                FROM Drink_HappyHour
+                WHERE startAtHappyHour = startAt AND idDrink = NEW.idBuyable
+            )
+    );
+    
+    -- if a discount was found then we can apply it to the price
+    IF (discount IS NOT NULL) THEN
+        SET saving = NEW.price * discount / 100;
+        SET NEW.price = NEW.price - NEW.price * discount / 100;
     END IF;
 END $$
 
@@ -1372,8 +1393,7 @@ VALUES (1, 1),
 
 -- SUPPLIER
 INSERT INTO Supplier (name)
-VALUES ('Migros'),
-	   ('Aligro');
+VALUES ('Migros');
 
 -- PRODUCT
 INSERT INTO UnitMetric (name, shortname)
@@ -1454,8 +1474,7 @@ VALUES (3, 5),
 
 INSERT INTO Food
 VALUES (1),
-       (2),
-       (18);
+       (2);
 
 INSERT INTO Food_Ingredient (idFood, idIngredient, quantity)
 VALUES (1, 7, 200),
@@ -1495,7 +1514,7 @@ VALUES ('2019-02-01 09:22', 7.7),
        ('2019-12-04 17:00', 7.7),
        ('2019-12-22 20:35', 7.7),
        ('2020-01-01 00:15', 7.7),
-       ('2020-01-17 18:00', 7.7);
+       ('2020-03-17 18:00', 7.7);
 
 INSERT INTO SupplyOrder (idOrder, idSupplier, idManager)
 VALUES (1, 1, 1),
@@ -1521,7 +1540,7 @@ VALUES (1, 3, 18.50, 7),
        (2, 4, 23.5, 1),
        (1, 4, 18.5, 1),
        (16, 4, 2, 2),
-       (4, 5, 2, 15),
+       (4, 5, 1, 15),
        (3, 6, 4, 3),
        (6, 6, 2, 3),
        (17, 6, 4, 5);

@@ -213,6 +213,8 @@ BEGIN
     DECLARE stock_id INT;
     DECLARE error BOOLEAN;
     DECLARE order_date DATETIME;
+    DECLARE discount INT;
+    DECLARE saving DOUBLE;
 
     CALL check_quantity_not_zero(NEW.quantity);
 
@@ -252,6 +254,25 @@ BEGIN
 
     IF error = true THEN
         CALL send_exception('Not enough stock for the order');
+    END IF;
+
+    -- check if the current order is during a happy hour and
+    -- that the product has any discounts
+    SET discount = (
+        SELECT reductionPercent
+        FROM HappyHour
+        WHERE order_date BETWEEN startAt AND ADDTIME(startAt, duration) AND
+            EXISTS (
+                SELECT *
+                FROM Drink_HappyHour
+                WHERE startAtHappyHour = startAt AND idDrink = NEW.idBuyable
+            )
+    );
+
+    -- if a discount was found then we can apply it to the price
+    IF (discount IS NOT NULL) THEN
+        SET saving = NEW.price * discount / 100;
+        SET NEW.price = NEW.price - NEW.price * discount / 100;
     END IF;
 END $$
 
